@@ -1,0 +1,173 @@
+
+<html>
+
+  <head>
+ <script>
+  function handleFiles(files) {
+      // Check for the various File API support.
+      if (window.FileReader) {
+          // FileReader are supported.
+          getAsText(files[0]);
+      } else {
+          alert('FileReader are not supported in this browser.');
+      }
+    }
+
+    function getAsText(fileToRead) {
+      var reader = new FileReader();
+      // Read file into memory as UTF-8      
+      reader.readAsText(fileToRead);
+      // Handle errors load
+      reader.onload = loadHandler;
+      reader.onerror = errorHandler;
+    }
+
+    function loadHandler(event) {
+      var csv = event.target.result;
+      processData(csv);
+    }
+
+    function processData(csv) {
+        var allTextLines = csv.split(/\r\n|\n/);
+        var lines = [];
+        for (var i=0; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(';');
+                var tarr = [];
+                for (var j=0; j<data.length; j++) {
+                    tarr.push(data[j]);
+                }
+                lines.push(tarr);
+        }
+      console.log(lines);
+      compute(lines);
+    }
+
+    function errorHandler(evt) {
+      if(evt.target.error.name == "NotReadableError") {
+          alert("Canno't read file !");
+      }
+    }
+
+    function compute(lines){
+      var totalDistance=0;
+      var maxDistRoute=0;
+      var routeDistance =0;
+      var busTravellinMaxDist='';
+
+      for (i=0; i<lines.length-1;i++){
+        //now we r in a bus
+        var busID1 =Number(lines[i][0].split(',')[0]);
+        var lat1 =  Number(lines[i][0].split(',')[1]);
+        var lng1 =  Number(lines[i][0].split(',')[2]);
+
+        //bus i+1
+        var busID2 = Number(lines[i+1][0].split(',')[0]);
+        var lat2 =  Number(lines[i+1][0].split(',')[1]);
+        var lng2 =  Number(lines[i+1][0].split(',')[2]);
+
+
+
+        if(busID1 == busID2){
+          //euclidian as of now, TODO change
+          dist = Math.abs(getDistance(lat1,lng1, lat2,lng2));
+          console.log("pairwise is "+ dist);
+          //calc distance 
+          routeDistance +=dist;
+
+        }
+
+        if(busID1 != busID2 || i==lines.length-2) {
+          //new bus
+          //add prev route to total
+          console.log("new bus found! at index: "+i);
+          console.log("route distance for prev bus was : "+routeDistance)
+
+          totalDistance+=routeDistance;
+          
+          console.log("total distance till now is:"+ totalDistance);
+
+          //update route that travels most
+          if(maxDistRoute < routeDistance){
+            
+            busTravellinMaxDist = busID1;
+            maxDistRoute = routeDistance;
+          }
+
+          //now reset
+          routeDistance= 0;
+
+
+        }
+
+      }
+
+      console.log("Total distance travelled by all buses is: " + totalDistance);
+      console.log("Maxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters");
+
+      //Add to firebase here
+      document.getElementById("result").innerText = "Total distance travelled by all buses is: " + totalDistance+"meters\nMaxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters";
+
+    }
+
+
+//ref: https://github.com/janantala/GPS-distance/blob/master/javascript/distance.js
+if (typeof(Number.prototype.toRad) === "undefined") 
+{
+  Number.prototype.toRad = function() 
+  {
+    return this * Math.PI / 180;
+  }
+}
+
+function getDistance(lat1, lon1, lat2, lon2) 
+{
+  var a = 6378137, b = 6356752.314245,  f = 1/298.257223563;
+  var L = (lon2-lon1).toRad();
+  var U1 = Math.atan((1-f) * Math.tan(lat1.toRad()));
+  var U2 = Math.atan((1-f) * Math.tan(lat2.toRad()));
+  var sinU1 = Math.sin(U1), cosU1 = Math.cos(U1);
+  var sinU2 = Math.sin(U2), cosU2 = Math.cos(U2);
+
+  var lambda = L, lambdaP, iterLimit = 100;
+  do 
+  {
+    var sinLambda = Math.sin(lambda), cosLambda = Math.cos(lambda);
+    var sinSigma = Math.sqrt((cosU2*sinLambda) * (cosU2*sinLambda) + (cosU1*sinU2-sinU1*cosU2*cosLambda) * (cosU1*sinU2-sinU1*cosU2*cosLambda));
+    if (sinSigma==0) return 0;
+
+    var cosSigma = sinU1*sinU2 + cosU1*cosU2*cosLambda;
+    var sigma = Math.atan2(sinSigma, cosSigma);
+    var sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
+    var cosSqAlpha = 1 - sinAlpha*sinAlpha;
+    var cos2SigmaM = cosSigma - 2*sinU1*sinU2/cosSqAlpha;
+    if (isNaN(cos2SigmaM)) cos2SigmaM = 0;
+    var C = f/16*cosSqAlpha*(4+f*(4-3*cosSqAlpha));
+    lambdaP = lambda;
+    lambda = L + (1-C) * f * sinAlpha * (sigma + C*sinSigma*(cos2SigmaM+C*cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)));
+  } while (Math.abs(lambda-lambdaP) > 1e-12 && --iterLimit>0);
+
+  if (iterLimit==0) return NaN
+
+  var uSq = cosSqAlpha * (a*a - b*b) / (b*b);
+  var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
+  var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+  var deltaSigma = B*sinSigma*(cos2SigmaM+B/4*(cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)-B/6*cos2SigmaM*(-3+4*sinSigma*sinSigma)*(-3+4*cos2SigmaM*cos2SigmaM)));
+  var s = b*A*(sigma-deltaSigma);
+  
+  return s;
+}
+
+
+
+</script>
+
+  </head>
+ 
+  <body>
+  <input type="file" id="csvFileInput" onchange="handleFiles(this.files)"
+            accept=".csv">
+  <div id="result"></div>
+    
+  </body>
+</html>
+
