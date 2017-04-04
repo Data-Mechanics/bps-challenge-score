@@ -3,6 +3,43 @@
 
   <head>
 
+<script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCvVMjlA_Gsh2xqukgSNN5AdFevJjCv9lU",
+    authDomain: "bps-scorer.firebaseapp.com",
+    databaseURL: "https://bps-scorer.firebaseio.com",
+    projectId: "bps-scorer",
+    storageBucket: "bps-scorer.appspot.com",
+    messagingSenderId: "473750220771"
+  };
+  firebase.initializeApp(config);
+
+  // Get a reference to the database service
+  database = firebase.database();
+
+
+function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
+   // Get a key for a new Post.
+
+  //Change this: https://console.firebase.google.com/project/bps-scorer/database/rules if facing security issues
+  // {
+  // "rules": {
+  //   ".read": true,
+  //   ".write": true
+  // }
+  // }
+  firebase.database().ref().child('bps-scorer').push({
+    csvtext: csvtext,
+    bestRouteID: bestRouteID,
+    totalDistance : totalDistance,
+    maxDistRoute: maxDistRoute
+  });
+
+}
+
+</script>
 
  <script>
 
@@ -43,7 +80,7 @@
                 lines.push(tarr);
         }
       console.log(lines);
-      compute(lines);
+      compute(lines,csv);
     }
 
     function errorHandler(evt) {
@@ -52,7 +89,7 @@
       }
     }
 
-    function compute(lines){
+    function compute(lines,csv){
       var totalDistance=0;
       var maxDistRoute=0;
       var routeDistance =0;
@@ -109,8 +146,14 @@
       console.log("Maxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters");
 
       //Add to firebase here
+
+
       document.getElementById("result").innerHTML = "Total distance travelled by all buses is: <strong> " + totalDistance+" meters </strong><br>Maxiumum distance is travelled by <strong> bus route  " + busTravellinMaxDist + " </strong> which is " + maxDistRoute+ " meters";
 
+      writeUserData(csv , busTravellinMaxDist, totalDistance, maxDistRoute);
+
+      //reset input
+      document.getElementById('csvFileInput').value = null;
     }
 
 
@@ -162,7 +205,6 @@ function getDistance(lat1, lon1, lat2, lon2)
 }
 
 
-
 </script>
 
 
@@ -196,7 +238,7 @@ function getDistance(lat1, lon1, lat2, lon2)
       <h4>Please upload result csv file below:</h4>
             <label class="btn btn-primary">
                 Browse&hellip; 
-                <input type="file" style="display: none;" id="csvFileInput" onchange="handleFiles(this.files)" accept=".csv">
+                <input type="file" style="display: none;" id="csvFileInput" onchange="handleFiles(this.files)" onload="handleFiles(this.files)" accept=".csv">
             </label>
   </div>
     
