@@ -2,7 +2,11 @@
 <html>
 
   <head>
+
+
  <script>
+
+  //ref: https://mounirmesselmeni.github.io/2012/11/20/reading-csv-file-with-javascript-and-html5-file-api/
   function handleFiles(files) {
       // Check for the various File API support.
       if (window.FileReader) {
@@ -101,11 +105,11 @@
 
       }
 
-      console.log("Total distance travelled by all buses is: " + totalDistance);
+      console.log("Total distance travelled by all buses is: " + totalDistance)+ " meters";
       console.log("Maxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters");
 
       //Add to firebase here
-      document.getElementById("result").innerText = "Total distance travelled by all buses is: " + totalDistance+"meters\nMaxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters";
+      document.getElementById("result").innerHTML = "Total distance travelled by all buses is: <strong> " + totalDistance+" meters </strong><br>Maxiumum distance is travelled by <strong> bus route  " + busTravellinMaxDist + " </strong> which is " + maxDistRoute+ " meters";
 
     }
 
@@ -161,12 +165,55 @@ function getDistance(lat1, lon1, lat2, lon2)
 
 </script>
 
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
   </head>
  
   <body>
-  <input type="file" id="csvFileInput" onchange="handleFiles(this.files)"
-            accept=".csv">
-  <div id="result"></div>
+
+
+  <div class="container">
+
+    <div class="col-12">
+      <div class="jumbotron">
+          <h1 style="text-align: center">It's scoring time!</h1>
+      </div>
+  </div>
+
+  <div class="row justify-content-center">
+  <div class="col-6">
+      <h4>Please upload result csv file below:</h4>
+            <label class="btn btn-primary">
+                Browse&hellip; 
+                <input type="file" style="display: none;" id="csvFileInput" onchange="handleFiles(this.files)" accept=".csv">
+            </label>
+  </div>
+    
+  </div>
+
+
+  </br>
+  </br>
+ <div class="row justify-content-center">
+<div class="col-6" id="result"></div>
+
+ </div>
+ 
+ 
+</div>
+
+
     
   </body>
 </html>
