@@ -1,16 +1,36 @@
-
 <html>
 
   <head>
 
-<script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
 <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-  crossorigin="anonymous"></script>
-  
+  crossorigin="anonymous">
+</script> 
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+
+<!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css"> -->
+<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+
 <script>
+
+
 $( document ).ready(function() {
+
+
   //Init firebase
   var config = {
     apiKey: "AIzaSyCvVMjlA_Gsh2xqukgSNN5AdFevJjCv9lU",
@@ -24,12 +44,83 @@ $( document ).ready(function() {
 
   // Get a reference to the database service
   database = firebase.database();
+  var dataList = [];
+  //retrieve current scores and attach listener
+
+  // firebase.database().ref('/bps-scorer/').on('value', function(snapshot) {
+
+  //   $("#scoreTable").DataTable().destroy();
+  //   snapshot.forEach(function(childSnapshot) {
+  //       var childData = childSnapshot.val();
+  //       console.log("child")
+  //       console.log(childData);
+  //       dataList.push(childData);
+
+  //   });
+  //   //Construct and show datatable
+  //   // buildHtmlTable("#scoreTable", dataList);
+  //   // CreateTableFromJSON(dataList);
+  // });
+
+
+  firebase.database().ref('/bps-scorer/').once('value').then(function(snapshot) {
+    console.log("hello there!");
+
+    snapshot.forEach(function(childSnapshot) {
+        var childData = childSnapshot.val();
+        // console.log("child")
+        // console.log(childData);
+        dataList.push(childData);
+
+    });
+    //Construct and show datatable
+    // buildHtmlTable("#scoreTable", dataList);
+    CreateTableFromJSON(dataList);
+  });
 
 });
 
+function CreateTableFromJSON(dataList) {
+  //delete older table first
 
-function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
-   // Get a key for a new Post.
+    // console.log("dataList");
+    // console.log(dataList);
+
+    g_dataList = dataList;
+
+    for(var i=0 ; i< dataList.length; i++ ){
+
+      dataList[i] = $.map(g_dataList[i], function(el) { return el });
+      dataList[i].splice(1,1)
+    }
+
+
+    $('#scoreTable').DataTable( {
+        data: dataList,
+        columns: [
+            { title: "Most efficient Bus Id" },
+          //  { title: "csvtext" },
+            { title: "Maximum Route Distance" },
+            { title: "Organization" },
+            { title: "Total Distance Travelled" }
+        ],
+        "order": [[ 3, "desc" ]]
+
+    } );
+
+    //     $('#scoreTable').DataTable( {
+    //     "order": [[ 3, "desc" ]]
+    // } );
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        // var divContainer = document.getElementByTag("body");
+        // divContainer.integritynerHTML = "";
+        // divContainer.appendChild(table);
+    }
+
+
+
+function writeUserData(orgName, csvtext, bestRouteID, totalDistance, maxDistRoute) {
 
   //Change this: https://console.firebase.google.com/project/bps-scorer/database/rules if facing security issues
   // {
@@ -38,11 +129,36 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
   //   ".write": true
   // }
   // }
+
+  //update table
+
   firebase.database().ref().child('bps-scorer').push({
+    orgName: orgName,
     csvtext: csvtext,
     bestRouteID: bestRouteID,
     totalDistance : totalDistance,
     maxDistRoute: maxDistRoute
+  }).then(function(snapshot){
+    console.log("hogaya!");
+
+    //read data to update table again
+
+    firebase.database().ref('/bps-scorer/').once('value').then(function(snapshot) {
+    console.log("hello there!");
+    //new data list
+    var dataList =[]
+    snapshot.forEach(function(childSnapshot) {
+        var childData = childSnapshot.val();
+        console.log("child")
+        console.log(childData);
+        dataList.push(childData);
+
+    });
+    //Construct and show datatable
+    // buildHtmlTable("#scoreTable", dataList);
+    $('#scoreTable').dataTable().fnDestroy();
+    CreateTableFromJSON(dataList);
+  });
   });
 
 }
@@ -52,6 +168,7 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
  <script>
 
   //ref: https://mounirmesselmeni.github.io/2012/11/20/reading-csv-file-with-javascript-and-html5-file-api/
+
   function handleFiles(files) {
       // Check for the various File API support.
       if (window.FileReader) {
@@ -87,7 +204,7 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
                 }
                 lines.push(tarr);
         }
-      console.log(lines);
+      // console.log(lines);
       compute(lines,csv);
     }
 
@@ -103,8 +220,19 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
       var routeDistance =0;
       var busTravellinMaxDist='';
 
+      document.getElementById("progress").innerHTML='<div class="progress"><div id="bar" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" width="1%"><span class="sr-only"></span></div></div>'
       for (i=0; i<lines.length-1;i++){
         //now we r in a bus
+
+        if(i%50==0){
+          document.getElementById("bar").style="width:"+(i/(lines.length))*100+"%"
+          console.log(document.getElementById("bar").style.width);          
+        }
+
+        if( i==lines.length-2){
+          document.getElementById("bar").style="width:100%"
+
+        }
         var busID1 =Number(lines[i][0].split(',')[0]);
         var lat1 =  Number(lines[i][0].split(',')[1]);
         var lng1 =  Number(lines[i][0].split(',')[2]);
@@ -119,7 +247,7 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
         if(busID1 == busID2){
           //euclidian as of now, TODO change
           dist = Math.abs(getDistance(lat1,lng1, lat2,lng2));
-          console.log("pairwise is "+ dist);
+          // console.log("pairwise is "+ dist);
           //calc distance 
           routeDistance +=dist;
 
@@ -128,12 +256,12 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
         if(busID1 != busID2 || i==lines.length-2) {
           //new bus
           //add prev route to total
-          console.log("new bus found! at index: "+i);
-          console.log("route distance for prev bus was : "+routeDistance)
+          // console.log("new bus found! at index: "+i);
+          // console.log("route distance for prev bus was : "+routeDistance)
 
           totalDistance+=routeDistance;
           
-          console.log("total distance till now is:"+ totalDistance);
+          // console.log("total distance till now is:"+ totalDistance);
 
           //update route that travels most
           if(maxDistRoute < routeDistance){
@@ -150,15 +278,20 @@ function writeUserData(csvtext, bestRouteID, totalDistance, maxDistRoute) {
 
       }
 
-      console.log("Total distance travelled by all buses is: " + totalDistance)+ " meters";
-      console.log("Maxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters");
+      //hide progress
+
+      // document.getElementById("progress").innerHTML=""
+
+      // console.log("Total distance travelled by all buses is: " + totalDistance)+ " meters";
+      // console.log("Maxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters");
 
       //Add to firebase here
 
 
       document.getElementById("result").innerHTML = "Total distance travelled by all buses is: <strong> " + totalDistance+" meters </strong><br>Maxiumum distance is travelled by <strong> bus route  " + busTravellinMaxDist + " </strong> which is " + maxDistRoute+ " meters";
 
-      writeUserData(csv , busTravellinMaxDist, totalDistance, maxDistRoute);
+      var orgName = document.getElementById("orgName").value
+      writeUserData(orgName, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
 
       //reset input
       document.getElementById('csvFileInput').value = null;
@@ -217,28 +350,15 @@ function getDistance(lat1, lon1, lat2, lon2)
 
 
 
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-
-
   </head>
  
   <body>
-  <div class="container">
+<div class="container">
 
   <div class="page-header">
     <h1>Boston Public Schools Transportation Challenge Leaderboard </h1>      
   </div>
 
-
-  <div></div>
   <div class="row-fluid">
     Add Organization Name:
     <input type="text" class="col-6" id="orgName"><br><br>
@@ -249,27 +369,33 @@ function getDistance(lat1, lon1, lat2, lon2)
     <div class="col-6">
       
             <label class="btn btn-primary">
-                Browse&hellip; 
+                Browse 
                 <input type="file" style="display: none;" id="csvFileInput" onchange="handleFiles(this.files)" onload="handleFiles(this.files)" accept=".csv">
             </label>
-    </div>
-    
+    </div>    
   </div>
 
+  </br>
 
+ <div id="progress" class="row-fluid">
+  </div>
 
   </br>
-  </br>
- <div class="row justify-content-center">
-<div class="col-6" id="result"></div>
+  <div class="row-fluid">
+    <div class="col-12" id="result">
+    </div>
+  </div>
 
- </div>
- 
- 
+  <div class="row-fluid">
+    <div class="col-6" >Current Score Board</div><br><br>
+  </div>
+
+  <table id="scoreTable">
+  </table>
+
 </div>
 
 
-    
-  </body>
+</body>
 </html>
 
