@@ -280,7 +280,10 @@ function writeUserData(orgName, csvtext, bestRouteID, totalDistance, maxDistRout
 
       //hide progress
 
-      // document.getElementById("progress").innerHTML=""
+        setTimeout(function() { 
+            // Your code here
+              document.getElementById("progress").innerHTML=""
+        }, 1000);
 
       // console.log("Total distance travelled by all buses is: " + totalDistance)+ " meters";
       // console.log("Maxiumum distance is travelled by " + busTravellinMaxDist + " which is " + maxDistRoute+ " meters");
