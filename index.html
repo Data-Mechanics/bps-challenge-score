@@ -3,14 +3,7 @@
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <style type="text/css">
-#drop {
-  border:2px dashed #bbb; -moz-border-radius:10px; -webkit-border-radius:10px;
-  border-radius:5px; padding:50px 25px 50px 25px; margin-bottom:20px; text-align:center;
-  width:100%; font-size:20pt; color:#bbb;
-}
-    </style>
-    <link 
+    <link
       rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
@@ -26,8 +19,6 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
-  </head>
-  <body>
     <script src="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.js"></script>
@@ -37,24 +28,25 @@
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.css">
     <style type="text/css">
+#drop {
+  border:2px dashed #bbb; -moz-border-radius:10px; -webkit-border-radius:10px;
+  border-radius:5px; padding:50px 25px 50px 25px; margin-bottom:20px; text-align:center;
+  width:100%; font-size:20pt; color:#bbb;
+}
 html { height:100%; }
 body { margin:0; font-family:Helvetica,Arial,FreeSans,sans-serif; color:#454545; font-size:14px; position:relative; }
 #container { height:100%; }
 a {text-decoration:none; color:#4267B6; cursor:pointer; }
 a:hover { text-decoration:underline; }
-.nobreak { white-space:nowrap; }
-pre { clear:left; }
-ul,ol,p,.descLayout pre { margin-bottom:1.5em; clear:left; }
+ul,ol { margin-bottom:1.5em; clear:left; }
 li { margin-bottom:1.3em; }
 ul.tight li { margin-bottom:0.3em; }
 ul { padding-left:30px; }
 ul ul { margin-top:1.5em; }
-.descLayout pre { margin-left:0.5em; }
 .warning { border:1px solid #D4D8EB; padding:10px; background:#F0F1F8; box-shadow:2px 2px 7px #777; margin-bottom:40px; }
 .warning strong { background:#747477; color:#FFF; border-radius:4px; padding:2px 4px; }
 .handsontable { margin-bottom:10px; color:#000; z-index:2; font-size:12px; }
 .handsontable li { margin-bottom:0; }
-.state-loaded { display:none; }
 button, .button {
   font-family:Helvetica,Arial,FreeSans,sans-serif;
   display:inline-block;
@@ -72,6 +64,8 @@ button, .button {
 }
 button:hover, .button:hover { background-color:#999999; text-decoration:none; }
     </style>
+  </head>
+  <body>
     <div class="container">
       <div class="page-header">
         <h1>Boston Public Schools Transportation Challenge Evaluation Tool</h1>      
@@ -81,7 +75,7 @@ button:hover, .button:hover { background-color:#999999; text-decoration:none; }
           <tr><td><a href="bps-tc-template.xlsx">Download solution <b>template</b></a> (to be filled out by you)</td></tr>
           <tr><td><a href="bps-tc-example.xlsx">Download solution <b>example</b> file</a> (to see an example of the solution format)</td></tr>
           <tr><td><a href="bps-tc-invalid.xlsx">Download <b>invalid</b> solution example file</a> (to see examples of validation errors)</td></tr>
-          <tr><td><a href="bps-tc-large.xlsx">Download <b>large</b> solution example file</a> (to test validation scalability/performance)</td></tr>
+          <!--tr><td><a href="bps-tc-large.xlsx">Download <b>large</b> solution example file</a> (to test validation scalability/performance)</td></tr-->
         </table>
         <br/>
       </div>
@@ -131,9 +125,9 @@ button:hover, .button:hover { background-color:#999999; text-decoration:none; }
             <div id="scrollArea" class="clusterize-scroll">
               <table>
                 <tbody id="contentArea" class="clusterize-content">
-                  <tr class="clusterize-no-data">
+                  <!--tr class="clusterize-no-data">
                     <td style="text-align:left; text-decoration:underline;"><b>Simulation Progress and Results</b></td>
-                  </tr>
+                  </tr-->
                 </tbody>
               </table>
             </div>
@@ -550,77 +544,83 @@ function simulate_prepare(buses, stops, students) {
   simulate_routes(buses, stops, students);
 }
 
-function simulate_routes(buses, stops, students) {
-  clusterize.append(['<tr><td>Simulating <b>Routes</b>.</td></tr>']);
-  var bus_id_last = null;
-  for (var i = 0; i < workbook_js['Routes'].length; i++) {
-    var step = workbook_js['Routes'][i],
-        bus_id = step['Bus ID'],
-        bus = buses[bus_id],
-        lat = step['Waypoint Latitude'],
-        lon = step['Waypoint Longitude'],
-        stop_id = lat+','+lon;
+function simulate_routes_step(buses, stops, students, bus_id_last, step) {
+  var bus_id = step['Bus ID'],
+      bus = buses[bus_id],
+      lat = step['Waypoint Latitude'],
+      lon = step['Waypoint Longitude'],
+      stop_id = lat+','+lon;
 
-    // Starting a new bus.
-    if (bus_id_last == null || bus_id != bus_id_last) {
-      if (lat != bus.yard.lat || lon != bus.yard.lon) {
-        simulation_validation_error('Bus ' + bus_id + ' does not begin its route at its bus yard!');
-      }
+  // Starting a new bus.
+  if (bus_id_last == null || bus_id != bus_id_last) {
+    if (lat != bus.yard.lat || lon != bus.yard.lon) {
+      simulation_validation_error('Bus ' + bus_id + ' does not begin its route at its bus yard!');
     }
+  }
 
-    // Switching to a route for another bus.
-    if (bus_id_last != null && bus_id != bus_id_last) { 
-      var bus_last = buses[bus_id_last];
-      if (bus_last.lat != bus_last.yard.lat || bus_last.lon != bus_last.yard.lon) {
-        simulation_validation_error('Bus ' + bus_id + ' did not finish its route at its bus yard!');
-      }
-      if (bus_last.students.length > 0) {
-        simulation_validation_error('Bus ' + bus_id + ' did not drop off ' + bus_last.students.length + ' students!');
-      }
-    }
+  // Switching to a route for another bus.
+  if (bus_id_last != null && bus_id_last != bus_id) { 
+    var bus_last = buses[bus_id_last];
+    if (bus_last.lat != bus_last.yard.lat || bus_last.lon != bus_last.yard.lon)
+      simulation_validation_error('Bus ' + bus_id_last + ' did not finish its route at its bus yard!');
+    if (bus_last.students.length > 0)
+      simulation_validation_error('Bus ' + bus_id_last + ' did not drop off ' + bus_last.students.length + ' students!');
+  }
 
-    // Pick up students at each stop.
-    if (stop_id in stops) {
-      var stop = stops[stop_id], students_keep = [];
-      for (var j = 0; j < stop.students.length; j++) {
-        var student = stop.students[j];
-        if (student.bus_id == bus_id && !student.boarded) {
-          bus.students.push(student);
-          student.boarded = true;
-        } else {
-          students_keep.push(student);
-        }
-      }
-      stop.students = students_keep;
-
-      if (!bus.overloaded && bus.students.length > bus.capacity) {
-        simulation_validation_error('Bus ' + bus_id + ' has a capacity of ' + bus.capacity + ' but ' + bus.students.length + ' students!');
-        bus.overloaded = true;
-      }
-    }
-
-    // Drop off students that have arrived at a school.
-    var students_keep = [];
-    for (var j = 0; j < bus.students.length; j++) {
-      var student = bus.students[j];
-      if (student.school == stop_id) {
-        student.arrived = true;
+  // Pick up students at each stop.
+  if (stop_id in stops) {
+    var stop = stops[stop_id], students_keep = [];
+    for (var j = 0; j < stop.students.length; j++) {
+      var student = stop.students[j];
+      if (student.bus_id == bus_id && !student.boarded) {
+        bus.students.push(student);
+        student.boarded = true;
       } else {
         students_keep.push(student);
       }
     }
-    bus.students = students_keep;
+    stop.students = students_keep;
 
-    // Add latest route step to current bus's distance traveled
-    // and update its location.
-    var dist = distance(bus.lat, bus.lon, lat, lon);
-    bus.lat = lat;
-    bus.lon = lon;
-    bus.distance += dist;
-
-    // Keep track of the last bus.
-    bus_id_last = bus_id;
+    if (!bus.overloaded && bus.students.length > bus.capacity) {
+      simulation_validation_error('Bus ' + bus_id + ' has a capacity of ' + bus.capacity + ' but has now picked up ' + bus.students.length + ' students (ignoring any further overloading for this bus).');
+      bus.overloaded = true;
+    }
   }
+
+  // Drop off students that have arrived at a school.
+  var students_keep = [];
+  for (var j = 0; j < bus.students.length; j++) {
+    var student = bus.students[j];
+    if (student.school == stop_id)
+      student.arrived = true;
+    else
+      students_keep.push(student);
+  }
+  bus.students = students_keep;
+
+  // Add latest route step to current bus's distance traveled
+  // and update its location.
+  var dist = distance(bus.lat, bus.lon, lat, lon);
+  bus.lat = lat;
+  bus.lon = lon;
+  bus.distance += dist;
+
+  // Keep track of the last bus.
+  return bus_id;
+}
+
+function simulate_routes(buses, stops, students) {
+  clusterize.append(['<tr><td>Simulating <b>Routes</b>.</td></tr>']);
+  var bus_id_last = null;
+  for (var i = 0; i < workbook_js['Routes'].length; i++) {
+    bus_id_last = simulate_routes_step(buses, stops, students, bus_id_last, workbook_js['Routes'][i]);
+  }
+  // Perform final checks.
+  var bus_last = buses[bus_id_last];
+  if (bus_last.lat != bus_last.yard.lat || bus_last.lon != bus_last.yard.lon)
+    simulation_validation_error('Bus ' + bus_id_last + ' did not finish its route at its bus yard!');
+  if (bus_last.students.length > 0)
+    simulation_validation_error('Bus ' + bus_id_last + ' did not drop off ' + bus_id_last.students.length + ' students!');
 
   simulate_results(buses, stops, students);
 }
@@ -630,7 +630,7 @@ function simulate_results(buses, stops, students) {
   for (var bus_id in buses) {
     distance_total += buses[bus_id].distance;
   }
-  simulation_evaluation_success('Total distance traveled by all buses: ' + (distance_total/1609.34).toFixed(2) + ' miles.');
+  simulation_evaluation_success('Approximate total distance traveled by all buses: ' + (distance_total/1609.34).toFixed(2) + ' miles.');
 
   var students_not_boarded = 0, students_not_arrived = 0;
   for (var i = 0; i < students.length; i++) {
@@ -640,7 +640,7 @@ function simulate_results(buses, stops, students) {
   if (students_not_boarded > 0)
     simulation_validation_error('Did not pick up ' + students_not_boarded + ' students!');
   if (students_not_arrived > 0)
-    simulation_validation_error('Did not deliver ' + students_not_arrived + ' students to their school!');
+    simulation_validation_error('<b>Did not deliver a total of ' + students_not_arrived + ' students to their school(s)!</b>');
 }
     </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
