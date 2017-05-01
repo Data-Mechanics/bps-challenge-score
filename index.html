@@ -3,6 +3,7 @@
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="path.js"></script>
     <link
       rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
@@ -276,7 +277,11 @@ var DropSheet = function DropSheet(opts) {
     pending = true;
     opts.on.workstart();
     var scripts = document.getElementsByTagName('script');
-    var worker = new Worker('/sheetjsw.js');
+    var path;
+    for (var i = 0; i < scripts.length; i++)
+      if (scripts[i].src.indexOf('path') != -1)
+        path = scripts[i].src.split('path.js')[0];
+    var worker = new Worker(path + 'sheetjsw.js');
     worker.onmessage = function(e) {
       switch(e.data.t) {
         case 'ready': break;
