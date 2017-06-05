@@ -533,14 +533,14 @@ function simulate_prepare(buses, stops, students) {
   clusterize.append(['<tr><td>Building <b>Stops</b> data structure.</td></tr>']);
   for (var i = 0; i < workbook_js['Stop-Assignments'].length; i++) {
     var stop = workbook_js['Stop-Assignments'][i],
-        stop_id = stop['Stop Latitude']+','+stop['Stop Longitude'];
+        stop_id = stop['Stop Longitude']+','+stop['Stop Latitude'];
     if (!(stop_id in stops))
         stops[stop_id] = {'students': []};
     var student = {
         'boarded': false,
         'arrived': false,
         'bus_id': stop['Bus ID'],
-        'school': stop['School Latitude']+','+stop['School Longitude']
+        'school': stop['School Longitude']+','+stop['School Latitude']
       };
     students.push(student);
     stops[stop_id].students.push(student);
@@ -554,7 +554,7 @@ function simulate_routes_step(buses, stops, students, bus_id_last, step) {
       bus = buses[bus_id],
       lat = step['Waypoint Latitude'],
       lon = step['Waypoint Longitude'],
-      stop_id = lat+','+lon;
+      stop_id = lon+','+lat;
 
   // Starting a new bus.
   if (bus_id_last == null || bus_id != bus_id_last) {
@@ -617,6 +617,7 @@ function simulate_routes_step(buses, stops, students, bus_id_last, step) {
 function simulate_routes(buses, stops, students) {
   clusterize.append(['<tr><td>Simulating <b>Routes</b>.</td></tr>']);
   var bus_id_last = null;
+
   for (var i = 0; i < workbook_js['Routes'].length; i++) {
     bus_id_last = simulate_routes_step(buses, stops, students, bus_id_last, workbook_js['Routes'][i]);
   }
