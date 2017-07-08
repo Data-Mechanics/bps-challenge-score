@@ -3,7 +3,7 @@
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script src="path.js"></script>
+    <script src="js/path.js"></script>
     <link
       rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
@@ -28,48 +28,12 @@
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.css">
-    <style type="text/css">
-#drop {
-  border:2px dashed #bbb; -moz-border-radius:10px; -webkit-border-radius:10px;
-  border-radius:5px; padding:50px 25px 50px 25px; margin-bottom:20px; text-align:center;
-  width:100%; font-size:20pt; color:#bbb;
-}
-html { height:100%; }
-body { margin:0; font-family:Helvetica,Arial,FreeSans,sans-serif; color:#454545; font-size:14px; position:relative; }
-#container { height:100%; }
-a {text-decoration:none; color:#4267B6; cursor:pointer; }
-a:hover { text-decoration:underline; }
-ul,ol { margin-bottom:1.5em; clear:left; }
-li { margin-bottom:1.3em; }
-ul.tight li { margin-bottom:0.3em; }
-ul { padding-left:30px; }
-ul ul { margin-top:1.5em; }
-.warning { border:1px solid #D4D8EB; padding:10px; background:#F0F1F8; box-shadow:2px 2px 7px #777; margin-bottom:40px; }
-.warning strong { background:#747477; color:#FFF; border-radius:4px; padding:2px 4px; }
-.handsontable { margin-bottom:10px; color:#000; z-index:2; font-size:12px; }
-.handsontable li { margin-bottom:0; }
-button, .button {
-  font-family:Helvetica,Arial,FreeSans,sans-serif;
-  display:inline-block;
-  margin:0 2px 0 0;
-  font-size:13px;
-  line-height:24px;
-  text-align:center;
-  white-space:nowrap;
-  vertical-align:middle;
-  cursor:pointer;
-  border:none;
-  -moz-user-select:none;
-  background-color:#bbb;
-  color:white;
-}
-button:hover, .button:hover { background-color:#999999; text-decoration:none; }
-    </style>
+    <link rel="stylesheet" media="screen" href="css/style.css">
   </head>
   <body>
     <div class="container">
       <div class="page-header">
-        <h1>Boston Public Schools Transportation Challenge Evaluation Tool</h1>      
+        <h1>Boston Public Schools Transportation Challenge</h1>      
       </div>
       <div class="row-fluid">
         <table style="width:100%;">
@@ -114,7 +78,7 @@ button:hover, .button:hover { background-color:#999999; text-decoration:none; }
           <div id="drop">Drag and drop Excel<br/>solution file here.</div>
         </div>
         <div id="simulation_view" style="display:none;">
-          <button onclick="simulate();">Simulation</button>
+          <button onclick="simulate(workbook_js);">Simulation</button>
           <br/><br/>
           <div class="clusterize">
             <table>
@@ -143,249 +107,11 @@ button:hover, .button:hover { background-color:#999999; text-decoration:none; }
         </div>
       </div>
     </div>
-    <script>
-if (!Object.keys) {
-  Object.keys = (function () {
-    var hasOwnProperty = Object.prototype.hasOwnProperty,
-        hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
-        dontEnums = [
-          'toString', 'toLocaleString', 'valueOf', 'hasOwnProperty',
-          'isPrototypeOf', 'propertyIsEnumerable', 'constructor'
-        ],
-        dontEnumsLength = dontEnums.length;
-    return function (obj) {
-      if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
-      var result = [];
-      for (var prop in obj)
-        if (hasOwnProperty.call(obj, prop))
-          result.push(prop);
-      if (hasDontEnumBug)
-        for (var i=0; i < dontEnumsLength; i++)
-          if (hasOwnProperty.call(obj, dontEnums[i])) result.push(dontEnums[i]);
-      return result;
-    };
-  })();
-}
-
-if (!Array.prototype.filter) {
-  Array.prototype.filter = function(fun /*, thisp */) {
-    "use strict";
-    if (this == null)
-      throw new TypeError();
-    var t = Object(this);
-    var len = t.length >>> 0;
-    if (typeof fun != "function")
-      throw new TypeError();
-    var res = [];
-    var thisp = arguments[1];
-    for (var i = 0; i < len; i++) {
-      if (i in t) {
-        var val = t[i]; // in case fun mutates this
-        if (fun.call(thisp, val, i, t))
-          res.push(val);
-      }
-    }
-    return res;
-  };
-}
-
-if ( !Array.prototype.forEach ) {
-  Array.prototype.forEach = function(fn, scope) {
-    for (var i = 0, len = this.length; i < len; ++i)
-      fn.call(scope, this[i], i, this);
-  };
-}
-
-if (!Array.prototype.map) {
-  Array.prototype.map = function(callback, thisArg) {
-    var T, A, k;
-    if (this == null)
-      throw new TypeError(" this is null or not defined");
-    var O = Object(this);
-    var len = O.length >>> 0;
-    if (typeof callback !== "function")
-      throw new TypeError(callback + " is not a function");
-    if (thisArg)
-      T = thisArg;
-    A = new Array(len);
-    k = 0;
-    while(k < len) {
-      var kValue, mappedValue;
-      if (k in O) {
-        kValue = O[ k ];
-        mappedValue = callback.call(T, kValue, k, O);
-        A[ k ] = mappedValue;
-      }
-      k++;
-    }
-    return A;
-  };      
-}
-
-// https://github.com/ttaubert/node-arraybuffer-slice
-// (c) 2013 Tim Taubert <tim@timtaubert.de>
-// arraybuffer-slice may be freely distributed under the MIT license.
-
-"use strict";
-
-if (typeof ArrayBuffer !== 'undefined' && !ArrayBuffer.prototype.slice) {
-  ArrayBuffer.prototype.slice = function (begin, end) {
-    begin = (begin|0) || 0;
-    var num = this.byteLength;
-    end = end === (void 0) ? num : (end|0);
-    // Handle negative values.
-    if (begin < 0) begin += num;
-    if (end < 0) end += num;
-    if (num === 0 || begin >= num || begin >= end)
-      return new ArrayBuffer(0);
-    var length = Math.min(num - begin, end - begin);
-    var target = new ArrayBuffer(length);
-    var targetArray = new Uint8Array(target);
-    targetArray.set(new Uint8Array(this, begin, length));
-    return target;
-  };
-}
-    </script>
-    <script src="//rawgit.com/SheetJS/js-xlsx/master/dist/xlsx.full.min.js"></script>
+    <script src="js/data.structs.js"></script>
+    <script src="js/xlsx.full.min.js"></script>
+    <script src="js/dropsheet.js"></script>
     <script>
 var sheets = {'Buses':true, 'Stop-Assignments':true, 'Routes':true};
-var workbook_js = null;
-var DropSheet = function DropSheet(opts) {
-  if(!opts) opts = {};
-  var nullfunc = function(){};
-  if(!opts.errors) opts.errors = {};
-  if(!opts.errors.badfile) opts.errors.badfile = nullfunc;
-  if(!opts.errors.pending) opts.errors.pending = nullfunc;
-  if(!opts.errors.failed) opts.errors.failed = nullfunc;
-  if(!opts.errors.large) opts.errors.large = nullfunc;
-  if(!opts.on) opts.on = {};
-  if(!opts.on.workstart) opts.on.workstart = nullfunc;
-  if(!opts.on.workend) opts.on.workend = nullfunc;
-  if(!opts.on.sheet) opts.on.sheet = nullfunc;
-  if(!opts.on.wb) opts.on.wb = nullfunc;
-
-  var rABS = typeof FileReader !== 'undefined' && typeof FileReader.prototype !== 'undefined' && typeof FileReader.prototype.readAsBinaryString !== 'undefined';
-  var useworker = typeof Worker !== 'undefined';
-  var pending = false;
-  function fixdata(data) {
-    var o = "", l = 0, w = 10240;
-    for(; l<data.byteLength/w; ++l)
-      o+=String.fromCharCode.apply(null,new Uint8Array(data.slice(l*w,l*w+w)));
-    o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(o.length)));
-    return o;
-  }
-
-  function sheetjsw(data, cb, readtype, xls) {
-    pending = true;
-    opts.on.workstart();
-    var scripts = document.getElementsByTagName('script');
-    var path;
-    for (var i = 0; i < scripts.length; i++)
-      if (scripts[i].src.indexOf('path') != -1)
-        path = scripts[i].src.split('path.js')[0];
-    var worker = new Worker(path + 'sheetjsw.js');
-    worker.onmessage = function(e) {
-      switch(e.data.t) {
-        case 'ready': break;
-        case 'e': pending = false; console.error(e.data.d); break;
-        case 'xls': case 'xlsx': pending = false;
-          opts.on.workend();
-          cb(JSON.parse(e.data.d), e.data.t); break;
-      }
-    };
-    worker.postMessage({d:data,b:readtype,t:'xlsx'});
-  }
-
-  var last_wb, last_type;
-
-  function to_json(workbook, type) {
-    var XL = type.toUpperCase() === 'XLS' ? XLS : XLSX;
-    if (useworker && workbook.SSF) XLS.SSF.load_table(workbook.SSF);
-    var result = {};
-    workbook.SheetNames.forEach(function(sheetName) {
-      var roa = XL.utils.sheet_to_row_object_array(workbook.Sheets[sheetName], {raw:true});
-      if (roa.length > 0) result[sheetName] = roa;
-    });
-    return result;
-  }
-
-  function get_columns(sheet, type) {
-    var val, rowObject, range, columnHeaders, emptyRow, C;
-    if (!sheet['!ref']) return [];
-    range = XLS.utils.decode_range(sheet["!ref"]);
-    columnHeaders = [];
-    for (C = range.s.c; C <= range.e.c; ++C) {
-      val = sheet[XLS.utils.encode_cell({c: C, r: range.s.r})];
-      if (!val) continue;
-      columnHeaders[C] = type.toLowerCase() == 'xls' ? XLS.utils.format_cell(val) : val.v;
-    }
-    return columnHeaders;
-  }
-
-  function choose_sheet(sheetidx) { process_wb(last_wb, last_type, sheetidx); }
-
-  function process_wb(wb, type, sheetidx) {
-
-    if (sheetidx == null)
-      for (sheetidx = 0; sheetidx < wb.SheetNames.length; sheetidx++)
-        if (wb.SheetNames[sheetidx] in sheets)
-          break;
-
-    last_wb = wb;
-    last_type = type;
-    opts.on.wb(wb, type, sheetidx);
-    var sheet = wb.SheetNames[sheetidx||0];
-    if (type.toLowerCase() == 'xls' && wb.SSF) XLS.SSF.load_table(wb.SSF);
-    workbook_js = to_json(wb, type);
-    var json = workbook_js[sheet], cols = get_columns(wb.Sheets[sheet], type);
-    opts.on.sheet(json, cols, wb.SheetNames, choose_sheet);
-  }
-
-  function handleDrop(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (pending) return opts.errors.pending();
-    var files = e.dataTransfer.files;
-    var i,f;
-    for (i = 0, f = files[i]; i != files.length; ++i) {
-      var reader = new FileReader();
-      var name = f.name;
-      reader.onload = function(e) {
-        var data = e.target.result;
-        var wb, arr, xls = false;
-        var readtype = {type: rABS ? 'binary' : 'base64' };
-        if (!rABS) {
-          arr = fixdata(data);
-          data = btoa(arr);
-        }
-        function doit() {
-          try {
-            if (useworker) { sheetjsw(data, process_wb, readtype, xls); return; }
-            wb = XLSX.read(data, readtype);
-            process_wb(wb, 'XLSX');
-          } catch(e) { opts.errors.failed(e); }
-        }
-
-        if (e.target.result.length > 500000) opts.errors.large(e.target.result.length, function(e) { if (e) doit(); });
-        else { doit(); }
-      };
-      if (rABS) reader.readAsBinaryString(f);
-      else reader.readAsArrayBuffer(f);
-    }
-  }
-
-  function handleDragover(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-  }
-
-  if (opts.drop.addEventListener) {
-    opts.drop.addEventListener('dragenter', handleDragover, false);
-    opts.drop.addEventListener('dragover', handleDragover, false);
-    opts.drop.addEventListener('drop', handleDrop, false);
-  }
-};
 
 var _target = document.getElementById('drop');
 var spinner;
@@ -404,16 +130,6 @@ var boldRenderer = function (instance, td, row, col, prop, value, cellProperties
   Handsontable.TextCell.renderer.apply(this, arguments);
   $(td).css({'font-weight': 'bold'});
 };
-
-var $window, availableWidth, availableHeight;
-var calculateSize = function () {
-  availableWidth = Math.max($('#drop').width(), 600);
-  availableHeight = Math.max($window.height() - 250, 400);
-};
-$(document).ready(function() {
-  $window = $(window);
-  $window.on('resize', calculateSize);
-});
 
 var make_buttons = function(sheetnames, cb) {
   var $buttons = $('#buttons');
@@ -448,209 +164,24 @@ var _onsheet = function(json, cols, sheetnames, select_sheet_cb) {
   });
 };
 
-DropSheet({
+var $window, availableWidth, availableHeight;
+var calculateSize = function () {
+  availableWidth = Math.max($('#drop').width(), 600);
+  availableHeight = Math.max($window.height() - 250, 400);
+};
+$(document).ready(function() {
+  $window = $(window);
+  $window.on('resize', calculateSize);
+});
+var workbook_js = DropSheet({
   drop: _target,
   on: { workstart: _workstart, workend: _workend, sheet: _onsheet },
   errors: { badfile: _badfile, pending: _pending, failed: _failed, large: _large }
-});
-
-if (typeof(Number.prototype.toRad) === "undefined") {
-  Number.prototype.toRad = function() { return this * Math.PI / 180; };
-}
-function distance(lat1, lon1, lat2, lon2) {
-  var a = 6378137, b = 6356752.314245,  f = 1/298.257223563;
-  var L = (lon2-lon1).toRad();
-  var U1 = Math.atan((1-f) * Math.tan(lat1.toRad()));
-  var U2 = Math.atan((1-f) * Math.tan(lat2.toRad()));
-  var sinU1 = Math.sin(U1), cosU1 = Math.cos(U1);
-  var sinU2 = Math.sin(U2), cosU2 = Math.cos(U2);
-  var lambda = L, lambdaP, iterLimit = 100;
-  do {
-    var sinLambda = Math.sin(lambda), cosLambda = Math.cos(lambda);
-    var sinSigma = Math.sqrt((cosU2*sinLambda) * (cosU2*sinLambda) + (cosU1*sinU2-sinU1*cosU2*cosLambda) * (cosU1*sinU2-sinU1*cosU2*cosLambda));
-    if (sinSigma==0)
-      return 0;
-    var cosSigma = sinU1*sinU2 + cosU1*cosU2*cosLambda;
-    var sigma = Math.atan2(sinSigma, cosSigma);
-    var sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
-    var cosSqAlpha = 1 - sinAlpha*sinAlpha;
-    var cos2SigmaM = cosSigma - 2*sinU1*sinU2/cosSqAlpha;
-    if (isNaN(cos2SigmaM))
-      cos2SigmaM = 0;
-    var C = f/16*cosSqAlpha*(4+f*(4-3*cosSqAlpha));
-    lambdaP = lambda;
-    lambda = L + (1-C) * f * sinAlpha * (sigma + C*sinSigma*(cos2SigmaM+C*cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)));
-  } while (Math.abs(lambda-lambdaP) > 1e-12 && --iterLimit>0);
-
-  if (iterLimit==0) return NaN;
-
-  var uSq = cosSqAlpha * (a*a - b*b) / (b*b);
-  var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
-  var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
-  var deltaSigma = B*sinSigma*(cos2SigmaM+B/4*(cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)-B/6*cos2SigmaM*(-3+4*sinSigma*sinSigma)*(-3+4*cos2SigmaM*cos2SigmaM)));
-  var s = b*A*(sigma-deltaSigma);
-  return s;
-}
-
+}, sheets);
 //$("#hot").hide();
 var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
-
-function simulation_validation_error(s) {
-  clusterize.append(['<tr><td style="color:firebrick;">' + s + '</td></tr>']);
-}
-
-function simulation_evaluation_success(s) {
-  clusterize.append(['<tr><td style="color:green;">' + s + '</td></tr>']);
-}
-
-function simulate() {
-  //console.log(workbook_js);
-
-  var buses = {}, stops = {}, students = [];
-
-  clusterize.clear();
-  var today = new Date();
-  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  clusterize.append(['<tr><td>Starting simulation on ' + date + ' at ' + time + '.</td></tr>']);
-
-  simulate_prepare(buses, stops, students);
-}
-
-function simulate_prepare(buses, stops, students) {
-  clusterize.append(['<tr><td>Building <b>Buses</b> data structure.</td></tr>']);
-  for (var i = 0; i < workbook_js['Buses'].length; i++) {
-    var bus = workbook_js['Buses'][i];
-    buses[bus['Bus ID']] = {
-      'distance': 0.0,
-      'lat': bus['Bus Latitude'],
-      'lon': bus['Bus Longitude'],
-      'yard': {'lat': bus['Bus Latitude'], 'lon': bus['Bus Longitude']},
-      'capacity': bus['Bus Capacity'],
-      'students': [],
-      'overloaded': false
-    };
-  }
-
-  clusterize.append(['<tr><td>Building <b>Stops</b> data structure.</td></tr>']);
-  for (var i = 0; i < workbook_js['Stop-Assignments'].length; i++) {
-    var stop = workbook_js['Stop-Assignments'][i],
-        stop_id = stop['Stop Longitude']+','+stop['Stop Latitude'];
-    if (!(stop_id in stops))
-        stops[stop_id] = {'students': []};
-    var student = {
-        'boarded': false,
-        'arrived': false,
-        'bus_id': stop['Bus ID'],
-        'school': stop['School Longitude']+','+stop['School Latitude']
-      };
-    students.push(student);
-    stops[stop_id].students.push(student);
-  }
-
-  simulate_routes(buses, stops, students);
-}
-
-function simulate_routes_step(buses, stops, students, bus_id_last, step) {
-  var bus_id = step['Bus ID'],
-      bus = buses[bus_id],
-      lat = step['Waypoint Latitude'],
-      lon = step['Waypoint Longitude'],
-      stop_id = lon+','+lat;
-
-  // Starting a new bus.
-  if (bus_id_last == null || bus_id != bus_id_last) {
-    if (lat != bus.yard.lat || lon != bus.yard.lon) {
-      simulation_validation_error('Bus ' + bus_id + ' does not begin its route at its bus yard!');
-    }
-  }
-
-  // Switching to a route for another bus.
-  if (bus_id_last != null && bus_id_last != bus_id) { 
-    var bus_last = buses[bus_id_last];
-    if (bus_last.lat != bus_last.yard.lat || bus_last.lon != bus_last.yard.lon)
-      simulation_validation_error('Bus ' + bus_id_last + ' did not finish its route at its bus yard!');
-    if (bus_last.students.length > 0)
-      simulation_validation_error('Bus ' + bus_id_last + ' did not drop off ' + bus_last.students.length + ' students!');
-  }
-
-  // Pick up students at each stop.
-  if (stop_id in stops) {
-    var stop = stops[stop_id], students_keep = [];
-    for (var j = 0; j < stop.students.length; j++) {
-      var student = stop.students[j];
-      if (student.bus_id == bus_id && !student.boarded) {
-        bus.students.push(student);
-        student.boarded = true;
-      } else {
-        students_keep.push(student);
-      }
-    }
-    stop.students = students_keep;
-
-    if (!bus.overloaded && bus.students.length > bus.capacity) {
-      simulation_validation_error('Bus ' + bus_id + ' has a capacity of ' + bus.capacity + ' but has now picked up ' + bus.students.length + ' students (ignoring any further overloading for this bus).');
-      bus.overloaded = true;
-    }
-  }
-
-  // Drop off students that have arrived at a school.
-  var students_keep = [];
-  for (var j = 0; j < bus.students.length; j++) {
-    var student = bus.students[j];
-    if (student.school == stop_id)
-      student.arrived = true;
-    else
-      students_keep.push(student);
-  }
-  bus.students = students_keep;
-
-  // Add latest route step to current bus's distance traveled
-  // and update its location.
-  var dist = distance(bus.lat, bus.lon, lat, lon);
-  bus.lat = lat;
-  bus.lon = lon;
-  bus.distance += dist;
-
-  // Keep track of the last bus.
-  return bus_id;
-}
-
-function simulate_routes(buses, stops, students) {
-  clusterize.append(['<tr><td>Simulating <b>Routes</b>.</td></tr>']);
-  var bus_id_last = null;
-
-  for (var i = 0; i < workbook_js['Routes'].length; i++) {
-    bus_id_last = simulate_routes_step(buses, stops, students, bus_id_last, workbook_js['Routes'][i]);
-  }
-  // Perform final checks.
-  var bus_last = buses[bus_id_last];
-  if (bus_last.lat != bus_last.yard.lat || bus_last.lon != bus_last.yard.lon)
-    simulation_validation_error('Bus ' + bus_id_last + ' did not finish its route at its bus yard!');
-  if (bus_last.students.length > 0)
-    simulation_validation_error('Bus ' + bus_id_last + ' did not drop off ' + bus_id_last.students.length + ' students!');
-
-  simulate_results(buses, stops, students);
-}
-
-function simulate_results(buses, stops, students) {
-  var distance_total = 0;
-  for (var bus_id in buses) {
-    distance_total += buses[bus_id].distance;
-  }
-  simulation_evaluation_success('Approximate total distance traveled by all buses: ' + (distance_total/1609.34).toFixed(2) + ' miles.');
-
-  var students_not_boarded = 0, students_not_arrived = 0;
-  for (var i = 0; i < students.length; i++) {
-    students_not_boarded += students[i].boarded ? 0 : 1;
-    students_not_arrived += students[i].arrived ? 0 : 1;
-  }
-  if (students_not_boarded > 0)
-    simulation_validation_error('Did not pick up ' + students_not_boarded + ' students!');
-  if (students_not_arrived > 0)
-    simulation_validation_error('<b>Did not deliver a total of ' + students_not_arrived + ' students to their school(s)!</b>');
-}
     </script>
+    <script src="js/simulation.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
   </body>
 </html>
