@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title></title>
+    <title>BPS Online Transportation Challenge</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script src="js/path.js"></script>
     <link
@@ -28,92 +28,126 @@
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.css">
+    <link rel="stylesheet" href="css/ladda-themeless.min.css">
     <link rel="stylesheet" media="screen" href="css/style.css">
   </head>
   <body>
-    <div class="container">
-      <div class="page-header">
-        <h1>Boston Public Schools Transportation Challenge</h1>      
-      </div>
-      <div class="row-fluid">
-        <table style="width:100%;">
-          <tr><td><a href="bps-tc-template.xlsx">Download solution <b>template</b></a> (to be filled out by you)</td></tr>
-          <tr><td><a href="bps-tc-example.xlsx">Download solution <b>example</b> file</a> (to see an example of the solution format)</td></tr>
-          <tr><td><a href="bps-tc-invalid.xlsx">Download <b>invalid</b> solution example file</a> (to see examples of validation errors)</td></tr>
-          <tr><td><a href="bps-tc-complete.xlsx">Download a <b>full-scale complete solution</b> file</a> (generated using <a href="https://github.com/Data-Mechanics/bps-simulated-data">bps-simulated-data</a>)</td></tr>
-          <tr><td>&nbsp;</td></tr>
-          <tr><td>View the source code for this tool <a href="https://github.com/Data-Mechanics/bps-challenge-score">on GitHub</a></td></tr>
-        </table>
-        <br/>
-      </div>
-      <!--div class="row-fluid">
-        Add Organization Name:
-        <input type="text" class="col-6" id="orgName"><br><br>
-      </div>
-      <div class="row-fluid">
-        <div class="col-6">Please upload result csv file below:</div>
-        <br/>
-        <div class="col-6">
-          <label class="btn btn-primary">
-            Browse 
-            <input type="file" style="display: none;" id="csvFileInput" 
-                   onchange="handleFiles(this.files)"
-                   onload="handleFiles(this.files)" accept=".csv">
-          </label>
-        </div>    
-      </div>
-      </br>
-      <div id="progress" class="row-fluid"></div>
-      </br>
-      <div class="row-fluid">
-        <div class="col-12" id="result"></div>
-      </div>
-      <div class="row-fluid">
-        <div class="col-6" ><h3>Current Score Board</h3></div>
-        <br/><br/>
-      </div>
-      <table id="scoreTable"></table-->
-      <div class="row-fluid">
-        <div>
-          <div id="drop">Drag and drop Excel<br/>solution file here.</div>
+    <header>
+      <div class="container">
+        <h1>Boston Public Schools<br/>
+          <small>Online Transportation Challenge</small>
+        </h1>
+        <div id="logos">
+          <img src="img/bps.png" width="120px;" alt="BPS logo"/>
+          <img src="img/bu.gif" alt="BU logo"/>
         </div>
-        <div id="simulation_view" style="display:none;">
-          <button onclick="simulate(workbook_js);">Simulation</button>
-          <br/><br/>
-          <div class="clusterize">
-            <table>
-              <thead>
-                <tr>
-                  <th style="font-weight:normal;">Click <b>Simulate</b> above to begin validating and evaluating your data.</th>
-                </tr>
-              </thead>
+      </div>
+    </header>
+    <div id="shadow" class="ss-style-multitriangles"></div>
+    <main id="content" class="container">
+      <section id="session-area" class="card">
+        <h2 class="text-center">Download a solution template</h2>
+        <p class="text-center">Use the files below to structure your own candidate solutions. All solutions submitted for evaluation must exactly match the format of these template and example files.</p>
+        <hr/>
+        <div class="row">
+          <div class="col-md-12">
+            <table style="width:100%;">
+              <tr><td><a href="bps-tc-template.xlsx">Download solution <b>template</b></a> (to be filled out by you)</td></tr>
+              <tr><td><a href="bps-tc-example.xlsx">Download solution <b>example</b> file</a> (to see an example of the solution format)</td></tr>
+              <tr><td><a href="bps-tc-invalid.xlsx">Download <b>invalid</b> solution example file</a> (to see examples of validation errors)</td></tr>
+              <tr><td><a href="bps-tc-complete.xlsx">Download a <b>full-scale complete solution</b> file</a> (generated using <a href="https://github.com/Data-Mechanics/bps-simulated-data">bps-simulated-data</a>)</td></tr>
             </table>
             <br/>
-            <div id="scrollArea" class="clusterize-scroll">
-              <table>
-                <tbody id="contentArea" class="clusterize-content">
-                  <!--tr class="clusterize-no-data">
-                    <td style="text-align:left; text-decoration:underline;"><b>Simulation Progress and Results</b></td>
-                  </tr-->
-                </tbody>
-              </table>
+          </div>
+        </div>
+      </section>
+      <section id="session-area" class="card">
+        <h2 class="text-center">Load and evaluate your solution</h2>
+        <p class="text-center">Drag and drop your completed template file. Once the file has been loaded (which may take a few minutes for full solutions) you can select your chosen criteria and evaluate your solution by clicking <b>Evaluate</b>.</p>
+        <hr/>
+        <div class="row">
+          <div class="col-md-4">
+            <div id="drop-area">
+              Drag and drop your completed template file
+              <br/>
+              <p>&mdash;or&mdash;</p><br/>
+              <button id="choose-file-button" class="btn btn-primary">Choose file</button>
+            </div>
+            <input type="file" id="choose-file" accept=".xlsx,.xls,.XLSX,.XLS">
+          </div>
+          <div class="col-md-8">
+            test
+          </div>
+          <div class="col-md-12">
+            <div id="simulation_view" style="display:none;">
+              <button onclick="simulate(workbook_js);">Evaluate</button>
+              <br/><br/>
+              <div class="clusterize">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="font-weight:normal;">Click <b>Simulate</b> above to begin validating and evaluating your data.</th>
+                    </tr>
+                  </thead>
+                </table>
+                <br/>
+                <div id="scrollArea" class="clusterize-scroll">
+                  <table>
+                    <tbody id="contentArea" class="clusterize-content">
+                      <!--tr class="clusterize-no-data">
+                        <td style="text-align:left; text-decoration:underline;"><b>Simulation Progress and Results</b></td>
+                      </tr-->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <br/>
             </div>
           </div>
-          <br/>
         </div>
-        <div id="spreadsheet_view"  style="display:none;">
-          <div id="buttons"></div>
-          <div id="hot" style="overflow:scroll" class="handsontable"></div>
+      </section>
+      <section id="instructions" class="card">
+        <h2 class="text-center">Review your loaded solution</h2>
+        <p class="text-center">You may examine your loaded solution below.</p>
+        <span id="expand-table-button" class="arrow-down"></span>
+        <div id="tables-area">
+          <div id="spreadsheet_view"  style="display:none;">
+            <div id="buttons"></div>
+            <div id="hot" style="overflow:scroll" class="handsontable"></div>
+          </div>
         </div>
+      </section>
+      <section class="card">
+        <h2 class="text-center">Submit and post your score</h2>
+        <p class="text-center">If you are satisfied with your evaluation, you may post your score for the record.</p>
+        <hr/>
+        <!-- Submit panel is split up into two halves -->
+        <!-- Left Half -->
+        <div class="row">
+          <div class="col-md-6">
+          </div>
+          <div class="col-md-6">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="container">
+        View the source code for this tool <a href="https://github.com/Data-Mechanics/bps-challenge-score">on GitHub</a>.
       </div>
-    </div>
+    </footer>
     <script src="js/data.structs.js"></script>
     <script src="js/xlsx.full.min.js"></script>
     <script src="js/dropsheet.js"></script>
     <script>
 var sheets = {'Buses':true, 'Stop-Assignments':true, 'Routes':true};
-
-var _target = document.getElementById('drop');
+var _target = document.getElementById('drop-area');
+var _choose = document.getElementById('choose-file-button');
 var spinner;
 var _workstart = function() { spinner = new Spinner().spin(_target); }
 var _workend = function() {
@@ -125,12 +159,10 @@ var _badfile = function() { alertify.alert('This file does not appear to be a va
 var _pending = function() { alertify.alert('Please wait until the current file is processed.', function(){}); };
 var _large = function(len, cb) { alertify.confirm("This file is " + (len/(1024*1024)).toFixed(2) + " MB and may take a few moments. Your browser may lock up during this process. Continue?", cb); };
 var _failed = function(e) { alertify.alert('This format is not supported.', function(){}); };
-
 var boldRenderer = function (instance, td, row, col, prop, value, cellProperties) {
   Handsontable.TextCell.renderer.apply(this, arguments);
   $(td).css({'font-weight': 'bold'});
 };
-
 var make_buttons = function(sheetnames, cb) {
   var $buttons = $('#buttons');
   $buttons.html("");
@@ -143,7 +175,11 @@ var make_buttons = function(sheetnames, cb) {
     }
   });
 };
-
+var $window, availableWidth, availableHeight;
+var calculateSize = function () {
+  availableWidth = Math.max($('#drop').width(), 600);
+  availableHeight = Math.max($window.height() - 250, 400);
+};
 var _onsheet = function(json, cols, sheetnames, select_sheet_cb) {
   make_buttons(sheetnames, select_sheet_cb);
   calculateSize();
@@ -163,23 +199,22 @@ var _onsheet = function(json, cols, sheetnames, select_sheet_cb) {
     stretchH: 'all'
   });
 };
-
-var $window, availableWidth, availableHeight;
-var calculateSize = function () {
-  availableWidth = Math.max($('#drop').width(), 600);
-  availableHeight = Math.max($window.height() - 250, 400);
-};
 $(document).ready(function() {
   $window = $(window);
   $window.on('resize', calculateSize);
 });
 var workbook_js = DropSheet({
-  drop: _target,
+  drop: _target, choose: _choose,
   on: { workstart: _workstart, workend: _workend, sheet: _onsheet },
   errors: { badfile: _badfile, pending: _pending, failed: _failed, large: _large }
 }, sheets);
 //$("#hot").hide();
 var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
+$('#tables-area').hide();
+$('#expand-table-button').click(function (e) {
+  $('#tables-area').slideToggle();
+  $(e.target).toggleClass('flip');
+});
     </script>
     <script src="js/simulation.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
