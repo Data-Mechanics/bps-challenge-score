@@ -63,7 +63,7 @@
       </section>
       <section id="session-area" class="card">
         <h2 class="text-center">Load and evaluate your solution</h2>
-        <p class="text-center">Drag and drop your completed template file. Once the file has been loaded (which may take a few minutes for full solutions) you can select your chosen criteria and evaluate your solution by clicking <b>Evaluate</b>.</p>
+        <p class="text-center">Drag and drop your completed template file. Once the file has been loaded (<b>which may take a few minutes for complete solutions</b>) you can select your chosen criteria and evaluate your solution by clicking <b>Evaluate solution</b>.</p>
         <hr/>
         <div class="row">
           <div class="col-md-4">
@@ -76,17 +76,17 @@
             <input type="file" id="choose-file" accept=".xlsx,.xls,.XLSX,.XLS">
           </div>
           <div class="col-md-8">
-            test
+            
           </div>
           <div class="col-md-12">
             <div id="simulation_view" style="display:none;">
-              <button onclick="simulate(workbook_js);">Evaluate</button>
-              <br/><br/>
+              <button class="btn btn-primary ladda-button btn-lg btn-block" onclick="simulate(workbook_js);">Evaluate solution</button>
+              <br/>
               <div class="clusterize">
                 <table>
                   <thead>
                     <tr>
-                      <th style="font-weight:normal;">Click <b>Simulate</b> above to begin validating and evaluating your data.</th>
+                      <th style="font-weight:normal;">Click <b>Evaluate solution</b> above to begin validating and evaluating your data. This area will display the results of the evaluation.</th>
                     </tr>
                   </thead>
                 </table>
@@ -150,11 +150,14 @@ var _target = document.getElementById('drop-area');
 var _choose = document.getElementById('choose-file-button');
 var spinner;
 var _workstart = function() { spinner = new Spinner().spin(_target); }
-var _workend = function() {
-  spinner.stop();
-  $('#simulation_view').show();
-  $('#spreadsheet_view').show();  
-}
+var _workend = function(clusterize) {
+  return function() {
+    spinner.stop();
+    $('#simulation_view').show();
+    $('#spreadsheet_view').show();
+    clusterize.clear();
+  };
+};
 var _badfile = function() { alertify.alert('This file does not appear to be a valid Excel file.', function(){}); };
 var _pending = function() { alertify.alert('Please wait until the current file is processed.', function(){}); };
 var _large = function(len, cb) { alertify.confirm("This file is " + (len/(1024*1024)).toFixed(2) + " MB and may take a few moments. Your browser may lock up during this process. Continue?", cb); };
@@ -203,13 +206,12 @@ $(document).ready(function() {
   $window = $(window);
   $window.on('resize', calculateSize);
 });
+var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
 var workbook_js = DropSheet({
   drop: _target, choose: _choose,
-  on: { workstart: _workstart, workend: _workend, sheet: _onsheet },
+  on: { workstart: _workstart, workend: _workend(clusterize), sheet: _onsheet },
   errors: { badfile: _badfile, pending: _pending, failed: _failed, large: _large }
 }, sheets);
-//$("#hot").hide();
-var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
 $('#tables-area').hide();
 $('#expand-table-button').click(function (e) {
   $('#tables-area').slideToggle();
