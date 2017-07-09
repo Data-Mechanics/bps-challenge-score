@@ -1,8 +1,6 @@
 
 /*
 body { margin:0; font-family:Helvetica,Arial,FreeSans,sans-serif; color:#454545; font-size:14px; position:relative; }
-a {text-decoration:none; color:#4267B6; cursor:pointer; }
-a:hover { text-decoration:underline; }
 ul,ol { margin-bottom:1.5em; clear:left; }
 li { margin-bottom:1.3em; }
 ul.tight li { margin-bottom:0.3em; }
@@ -27,7 +25,6 @@ button, .button {
   background-color:#bbb;
   color:white;
 }
-button:hover, .button:hover { background-color:#999999; text-decoration:none; }
 */
 
 #drop {
@@ -48,9 +45,10 @@ h1, h2, h3 {
 h1 {
   font-size: 40px;
   font-weight: bold;
+  line-height: 32px;
   color: rgba(51, 51, 51, 0.8);
   text-shadow: 1px 4px 6px #fff, 0 0 0 #000, 1px 4px 6px #fff;
-  margin-top: 38px;
+  margin-top: 50px;
 }
 
 ::-moz-selection {
