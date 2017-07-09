@@ -22,6 +22,36 @@ var DropSheet = function DropSheet(opts, sheets) {
   var rABS = typeof FileReader !== 'undefined' && typeof FileReader.prototype !== 'undefined' && typeof FileReader.prototype.readAsBinaryString !== 'undefined';
   var useworker = typeof Worker !== 'undefined';
   var pending = false;
+
+  function readFile(files) {
+    var i,f;
+    for (i = 0, f = files[i]; i != files.length; ++i) {
+      var reader = new FileReader();
+      var name = f.name;
+      reader.onload = function(e) {
+        var data = e.target.result;
+        var wb, arr, xls = false;
+        var readtype = {type: rABS ? 'binary' : 'base64' };
+        if (!rABS) {
+          arr = fixdata(data);
+          data = btoa(arr);
+        }
+        function doit() {
+          try {
+            if (useworker) { sheetjsw(data, process_wb, readtype, xls); return; }
+            wb = XLSX.read(data, readtype);
+            process_wb(wb, 'XLSX');
+          } catch(e) { opts.errors.failed(e); }
+        }
+
+        if (e.target.result.length > 500000) opts.errors.large(e.target.result.length, function(e) { if (e) doit(); });
+        else { doit(); }
+      };
+      if (rABS) reader.readAsBinaryString(f);
+      else reader.readAsArrayBuffer(f);
+    }
+  }
+
   function fixdata(data) {
     var o = "", l = 0, w = 10240;
     for(; l<data.byteLength/w; ++l)
@@ -80,7 +110,6 @@ var DropSheet = function DropSheet(opts, sheets) {
   function choose_sheet(sheetidx) { process_wb(last_wb, last_type, sheetidx); }
 
   function process_wb(wb, type, sheetidx) {
-
     if (sheetidx == null)
       for (sheetidx = 0; sheetidx < wb.SheetNames.length; sheetidx++)
         if (wb.SheetNames[sheetidx] in sheets)
@@ -97,50 +126,72 @@ var DropSheet = function DropSheet(opts, sheets) {
   }
 
   function handleDrop(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (pending) return opts.errors.pending();
-    var files = e.dataTransfer.files;
-    var i,f;
-    for (i = 0, f = files[i]; i != files.length; ++i) {
-      var reader = new FileReader();
-      var name = f.name;
-      reader.onload = function(e) {
-        var data = e.target.result;
-        var wb, arr, xls = false;
-        var readtype = {type: rABS ? 'binary' : 'base64' };
-        if (!rABS) {
-          arr = fixdata(data);
-          data = btoa(arr);
-        }
-        function doit() {
-          try {
-            if (useworker) { sheetjsw(data, process_wb, readtype, xls); return; }
-            wb = XLSX.read(data, readtype);
-            process_wb(wb, 'XLSX');
-          } catch(e) { opts.errors.failed(e); }
-        }
-
-        if (e.target.result.length > 500000) opts.errors.large(e.target.result.length, function(e) { if (e) doit(); });
-        else { doit(); }
-      };
-      if (rABS) reader.readAsBinaryString(f);
-      else reader.readAsArrayBuffer(f);
+    if (typeof jQuery !== 'undefined') {
+      e.stopPropagation();
+      e.preventDefault();
+      if (pending) return opts.errors.pending();
+      var files = e.dataTransfer.files;
+      readFile(files);
+    } else {
+      alertify.alert("<img src='style/cancel.png' alt='Error'>Error!", "Drag and drop not supported. Please use the 'Choose File' button.");
     }
   }
 
   function handleDragover(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+    if (typeof jQuery !== 'undefined') {
+      e.stopPropagation();
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      $('#drop-area').removeClass('dragdefault');
+      $('#drop-area').addClass('dragenter');
+    } else {
+      alertify.alert("<img src='style/cancel.png' alt='Error'>Error!", "Drag and drop not supported. Please use the 'Choose file' button.");
+    }
+  }
+
+  function handleDragleave(e) {
+    if (typeof jQuery !== 'undefined') {
+      $('#drop-area').removeClass('dragenter');
+    } else {
+      alertify.alert("<img src='style/cancel.png' alt='Error'>Error!", "Drag and drop not supported. Please use the 'Choose file' button.");
+    }
+  }
+
+  function handleClick(e) {
+    if (typeof jQuery !== 'undefined') {
+      $('#choose-file').click();
+    } else {
+      alertify.alert("<img src='style/cancel.png' alt='Error'>Error!", "Drag and drop not supported. Please use the 'Choose file' button.");
+    }
   }
 
   if (opts.drop.addEventListener) {
     opts.drop.addEventListener('dragenter', handleDragover, false);
+    opts.drop.addEventListener('dragleave', handleDragleave);
     opts.drop.addEventListener('dragover', handleDragover, false);
     opts.drop.addEventListener('drop', handleDrop, false);
+    opts.choose.addEventListener('click', handleClick, false);
   }
-  
+
+  // For choosing a file using <input> (i.e., "Choose file" button).
+  function handleFile(e) {
+    console.log("Here!");
+    var files = e.target.files;
+    if (window.FileReader) {
+      // FileReader is supported.
+      readFile(files);
+    } else {
+      alertify.alert("<img src='style/cancel.png' alt='Error'>Error!", "FileReader is not supported in this browser.");
+    }
+  }
+
+  if (opts.choose.addEventListener) {
+    if (typeof jQuery !== 'undefined') {
+      $('#choose-file').change(handleFile);
+      //opts.choose.addEventListener('change', handleFile, false);
+    }
+  }
+
   return workbook_js;
 };
 
