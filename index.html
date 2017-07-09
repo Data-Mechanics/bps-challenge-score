@@ -28,8 +28,14 @@
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.css">
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.css">
+    <script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css"> -->
+    <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/ladda-themeless.min.css">
     <link rel="stylesheet" media="screen" href="css/style.css">
+    <script src="js/scoreboard.js"></script>
   </head>
   <body>
     <header>
@@ -121,8 +127,6 @@
         <h2 class="text-center">Submit and post your score</h2>
         <p class="text-center">If you are satisfied with your evaluation, you may post your score for the record.</p>
         <hr/>
-        <!-- Submit panel is split up into two halves -->
-        <!-- Left Half -->
         <div class="row">
           <div class="col-md-6">
           </div>
@@ -133,6 +137,18 @@
           <div class="col-md-12">
             <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
           </div>
+        </div>
+      </section>
+      <section class="card">
+        <h2 class="text-center">Scoreboard</h2>
+        <p class="text-center">The scores for past submissions can be viewed below.</p>
+        <hr/>
+        <div class="row">
+          <!--div class="row-fluid">
+            Add Organization Name:
+            <input type="text" class="col-6" id="orgName"><br><br>
+          </div-->
+          <table id="scoreTable"></table>
         </div>
       </section>
     </main>

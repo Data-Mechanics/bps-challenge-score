@@ -2,7 +2,7 @@
  * Submission scoreboard functionalities.
  */
 
-$( document ).ready(function() {
+$(document).ready(function() {
   // Initialize firebase.
   var config = {
     apiKey: "AIzaSyCvVMjlA_Gsh2xqukgSNN5AdFevJjCv9lU",
@@ -47,7 +47,6 @@ function CreateTableFromJSON(dataList) {
 }
 
 function writeUserData(orgName, csvtext, bestRouteID, totalDistance, maxDistRoute) {
-
   // Change this: https://console.firebase.google.com/project/bps-scorer/database/rules if facing security issues.
   // { "rules": { ".read":true, ".write":true } }
   // Update table.
@@ -92,7 +91,6 @@ function getAsText(fileToRead) {
   reader.readAsText(fileToRead);
   // Handle errors load.
   reader.onload = loadHandler;
-  reader.onerror = errorHandler;
 }
 
 function loadHandler(event) {
@@ -113,12 +111,6 @@ function processData(csv) {
   compute(lines, csv);
 }
 
-function errorHandler(evt) {
-  if (evt.target.error.name == "NotReadableError") {
-    alert("Cannot read file!");
-  }
-}
-
 function compute(lines, csv) {
   var totalDistance=0;
   var maxDistRoute=0;
@@ -127,17 +119,11 @@ function compute(lines, csv) {
 
   document.getElementById("progress").innerHTML='<div class="progress"><div id="bar" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" width="1%"><span class="sr-only"></span></div></div>'
 
-  //hide progress
-  // document.getElementById("progress").innerHTML=""
-
-  //Add to firebase here
+  //Add to firebase here.
   document.getElementById("result").innerHTML = "Total distance travelled by all buses is: <strong> " + totalDistance+" meters </strong><br>Maxiumum distance is travelled by <strong> bus route  " + busTravellinMaxDist + " </strong> which is " + maxDistRoute+ " meters";
 
   var orgName = document.getElementById("orgName").value
   writeUserData(orgName, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
-
-  //reset input
-  document.getElementById('csvFileInput').value = null;
 }
 
 /* eof */
