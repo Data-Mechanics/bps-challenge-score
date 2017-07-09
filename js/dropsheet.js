@@ -131,6 +131,7 @@ var DropSheet = function DropSheet(opts, sheets) {
       e.preventDefault();
       if (pending) return opts.errors.pending();
       var files = e.dataTransfer.files;
+      $('#drop-area').removeClass('dragenter');
       readFile(files);
     } else {
       alertify.alert("<img src='style/cancel.png' alt='Error'>Error!", "Drag and drop not supported. Please use the 'Choose File' button.");
