@@ -27,6 +27,8 @@ button, .button {
 }
 */
 
+input#submitter_name { padding-left:5px; padding-right:5px; font-size:18px; }
+
 #drop {
   border:2px dashed #bbb; -moz-border-radius:10px; -webkit-border-radius:10px;
   border-radius:5px; padding:50px 25px 50px 25px; margin-bottom:20px; text-align:center;

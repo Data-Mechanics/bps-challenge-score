@@ -57,12 +57,12 @@ function scoreboard_create() {
   return scoreboard;
 }
 
-function scoreboard_add(scoreboard, orgName, csvtext, bestRouteID, totalDistance, maxDistRoute) {
+function scoreboard_add(scoreboard, submitter_name, csvtext, bestRouteID, totalDistance, maxDistRoute) {
   // Change this: https://console.firebase.google.com/project/bps-scorer/database/rules if facing security issues.
   // { "rules": { ".read":true, ".write":true } }
   // Update table.
   firebase.database().ref().child('bps-scorer').push({
-    orgName: orgName,
+    orgName: submitter_name,
     csvtext: csvtext,
     bestRouteID: bestRouteID,
     totalDistance : totalDistance,
@@ -86,14 +86,8 @@ function compute(lines, csv) {
   var maxDistRoute=0;
   var routeDistance =0;
   var busTravellinMaxDist='';
-
-  document.getElementById("progress").innerHTML='<div class="progress"><div id="bar" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" width="1%"><span class="sr-only"></span></div></div>'
-
-  //Add to firebase here.
-  document.getElementById("result").innerHTML = "Total distance travelled by all buses is: <strong> " + totalDistance+" meters </strong><br>Maxiumum distance is travelled by <strong> bus route  " + busTravellinMaxDist + " </strong> which is " + maxDistRoute+ " meters";
-
-  var orgName = document.getElementById("orgName").value
-  scoreboard_add(scoreboard, orgName, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
+  var submitter_name = document.getElementById("submitter_name").value;
+  scoreboard_add(scoreboard, submitter_name, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
 }
 
 /* eof */

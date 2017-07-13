@@ -125,7 +125,7 @@
       </section>
       <section class="card">
         <h2 class="text-center">Submit and post your score</h2>
-        <p class="text-center">If you are satisfied with your evaluation, you may post your score for the record.</p>
+        <p class="text-center">If you are satisfied with your evaluation, you may post your score for the record. The name you specified will appear once it is approved by a moderator.</p>
         <hr/>
         <div class="row">
           <div class="col-md-6">
@@ -135,6 +135,13 @@
         </div>
         <div class="row">
           <div class="col-md-12">
+            <div class="row-fluid">
+              <table style="width:50%;">
+                <tr><td width="60px;"><b>Name *:</b>&nbsp;</td><td><input type="text" style="width:100%;" id="submitter_name"></td></tr>
+                <tr><td></td><td><small>* as it will appear in the scoreboard</small></td></tr>
+              </table>
+              <br/>
+            </div>
             <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
           </div>
         </div>
@@ -144,10 +151,6 @@
         <p class="text-center">The scores for past submissions can be viewed below.</p>
         <hr/>
         <div id="scoreboard_container" class="row">
-          <!--div class="row-fluid">
-            Add Organization Name:
-            <input type="text" class="col-6" id="orgName"><br><br>
-          </div-->
           <table id="scoreboard"></table>
         </div>
       </section>
@@ -234,7 +237,6 @@ $('#expand-table-button').click(function (e) {
   $('#tables-area').slideToggle();
   $(e.target).toggleClass('flip');
 });
-
     </script>
     <script src="js/simulation.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
