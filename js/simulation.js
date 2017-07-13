@@ -199,6 +199,9 @@ function simulate_results(buses, stops, students) {
   $("#miles").html(numeral(distance_total.toFixed(3)).format('0,0.000'));
   $("#buses_submit").val(buses_used);
   $("#miles_submit").val(distance_total.toFixed(5));
+
+  //Send event for ready for submission
+  $( document ).trigger("submitReadyEvent");
 }
 
 /* eof */

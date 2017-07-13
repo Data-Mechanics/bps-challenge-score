@@ -254,6 +254,12 @@ var _onsheet = function(json, cols, sheetnames, select_sheet_cb) {
 $(document).ready(function() {
   $window = $(window);
   $window.on('resize', calculateSize);
+  $( document ).on( "submitReadyEvent", function( event, arg1, arg2 ) {
+    console.log( "submission ready!" );
+    $("#submit").removeClass('disabled');
+    $("#submit").addClass('enabled');
+
+  });
 });
 var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
 var workbook_js = DropSheet({
