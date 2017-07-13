@@ -48,7 +48,7 @@ function scoreboard_update(scoreboard, data) {
       "Submitter": data[i]["submitter"],
       "Number of Buses": data[i]["buses"],
       "Total Distance Travelled by All Buses": data[i]["miles"]
-    })
+    });
 //    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
   }
 // scoreboard.rows.add(data);
@@ -107,5 +107,3 @@ function prepareSubmitData(){
   scoreboard_add(name, buses, miles);
 
 }
-
-/* eof 
