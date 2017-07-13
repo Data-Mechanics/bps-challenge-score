@@ -43,12 +43,6 @@ function scoreboard_update(scoreboard, data) {
   scoreboard.clear();
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
-    // scoreboard.rows.add({
-    //   "Date": data[i][3],
-    //   "Submitter": data[i][5],
-    //   "Number of Buses": data[i][1],
-    //   "Total Distance Travelled by All Buses": data[i][4]
-    // });
   }
   scoreboard.rows.add(data);
 
@@ -102,7 +96,7 @@ function prepareSubmitData(){
   console.log("preparing data to submit");
   var miles = $("#miles")[0].innerHTML;
   var buses = $("#buses")[0].innerHTML;
-  var name = "Test";
+  var name = $("#submitter_name")[0].value;
   scoreboard_add(name, buses, miles);
 
 }
