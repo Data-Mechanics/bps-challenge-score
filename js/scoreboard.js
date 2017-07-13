@@ -43,12 +43,11 @@ function scoreboard_update(scoreboard, data) {
   scoreboard.clear();
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
-    data[i].splice(1,1);
     scoreboard.rows.add({
-      "Date": data["date"],
-      "Submitter": data["submitter"],
-      "Number of Buses": data["buses"],
-      "Total Distance Travelled by All Buses": data[miles]
+      "Date": data[i]["date"],
+      "Submitter": data[i]["submitter"],
+      "Number of Buses": data[i]["buses"],
+      "Total Distance Travelled by All Buses": data[i]["miles"]
     })
 //    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
   }
