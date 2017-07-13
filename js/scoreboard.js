@@ -6,13 +6,21 @@ var scoreboard_spinner;
 
 $(document).ready(function() {
   // Initialize firebase.
-  var config = {
+  /*var config = {
     apiKey: "AIzaSyCvVMjlA_Gsh2xqukgSNN5AdFevJjCv9lU",
     authDomain: "bps-scorer.firebaseapp.com",
     databaseURL: "https://bps-scorer.firebaseio.com",
     projectId: "bps-scorer",
     storageBucket: "bps-scorer.appspot.com",
     messagingSenderId: "473750220771"
+  };*/
+  var config = {
+    apiKey: "AIzaSyA755g5_Ic74tNnjjC9J2-R0AzgAFwm-rs",
+    authDomain: "bps-otc.firebaseapp.com",
+    databaseURL: "https://bps-otc.firebaseio.com",
+    projectId: "bps-otc",
+    storageBucket: "bps-otc.appspot.com",
+    messagingSenderId: "627522842012"
   };
   firebase.initializeApp(config);
 
@@ -21,7 +29,7 @@ $(document).ready(function() {
   var data = [];
 
   // Retrieve current scores and attach listener.
-  firebase.database().ref('/bps-scorer/').once('value').then(function(snapshot) {
+  firebase.database().ref('/bps-otc/').once('value').then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) { data.push(childSnapshot.val()); });
     scoreboard_update(scoreboard, data); // Construct and show datatable.
   });
@@ -57,37 +65,26 @@ function scoreboard_create() {
   return scoreboard;
 }
 
-function scoreboard_add(scoreboard, submitter_name, csvtext, bestRouteID, totalDistance, maxDistRoute) {
-  // Change this: https://console.firebase.google.com/project/bps-scorer/database/rules if facing security issues.
+function scoreboard_add(submitter_name, buses, miles) {
+  // Change this: https://console.firebase.google.com/project/bps-otc/database/rules if facing security issues.
   // { "rules": { ".read":true, ".write":true } }
   // Update table.
-  firebase.database().ref().child('bps-scorer').push({
-    orgName: submitter_name,
-    csvtext: csvtext,
-    bestRouteID: bestRouteID,
-    totalDistance : totalDistance,
-    maxDistRoute: maxDistRoute
+  firebase.database().ref().child('bps-otc').push({
+    date: "2017-07-13",
+    submitter: submitter_name,
+    buses: buses,
+    miles: miles
   }).then(function(snapshot) {
     // Read data to update table again.
-    firebase.database().ref('/bps-scorer/').once('value').then(function(snapshot) {
-      //new data list
-      var dataList =[]
+    firebase.database().ref('/bps-otc/').once('value').then(function(snapshot) {
+      var data = []
       snapshot.forEach(function(childSnapshot) {
         var childData = childSnapshot.val();
-        dataList.push(childData);
+        data.push(childData);
       });
-      scoreboard_update(scoreboard, dataList);
+      scoreboard_update(scoreboard, data);
     });
   });
-}
-
-function compute(lines, csv) {
-  var totalDistance=0;
-  var maxDistRoute=0;
-  var routeDistance =0;
-  var busTravellinMaxDist='';
-  var submitter_name = document.getElementById("submitter_name").value;
-  scoreboard_add(scoreboard, submitter_name, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
 }
 
 /* eof */
