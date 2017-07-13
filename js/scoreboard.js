@@ -43,14 +43,14 @@ function scoreboard_update(scoreboard, data) {
   scoreboard.clear();
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
-    scoreboard.rows.add({
-      "Date": data[i][3],
-      "Submitter": data[i][5],
-      "Number of Buses": data[i][1],
-      "Total Distance Travelled by All Buses": data[i][4]
-    });
+    // scoreboard.rows.add({
+    //   "Date": data[i][3],
+    //   "Submitter": data[i][5],
+    //   "Number of Buses": data[i][1],
+    //   "Total Distance Travelled by All Buses": data[i][4]
+    // });
   }
-  // scoreboard.rows.add(data);
+  scoreboard.rows.add(data);
 
   scoreboard.draw();
   $('#scoreboard_container').fadeTo(100, 1);
@@ -77,11 +77,11 @@ function scoreboard_add(submitter_name,buses, miles) {
   // Update table.
   firebase.database().ref().child('bps-otc').push({
     date: "2017-07-13",
-    createdAt: firebase.database.ServerValue.TIMESTAMP,
-    submitter: submitter_name,
-    approved: false,
-    buses: buses,
-    miles: miles
+    name_team: submitter_name,
+    num_buses: buses,
+    num_miles: miles,
+    timestamp: firebase.database.ServerValue.TIMESTAMP,
+    value_approved: false,
   }).then(function(snapshot) {
     // Read data to update table again.
     firebase.database().ref('/bps-otc/').once('value').then(function(snapshot) {
