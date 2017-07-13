@@ -43,6 +43,7 @@ function scoreboard_update(scoreboard, data) {
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
     data[i].splice(1,1);
+    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
   }
   scoreboard.clear();
   scoreboard.rows.add(data);
@@ -65,13 +66,15 @@ function scoreboard_create() {
   return scoreboard;
 }
 
-function scoreboard_add(submitter_name, buses, miles) {
+function scoreboard_add(submitter_name,buses, miles) {
   // Change this: https://console.firebase.google.com/project/bps-otc/database/rules if facing security issues.
   // { "rules": { ".read":true, ".write":true } }
   // Update table.
   firebase.database().ref().child('bps-otc').push({
     date: "2017-07-13",
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
     submitter: submitter_name,
+    approved: false,
     buses: buses,
     miles: miles
   }).then(function(snapshot) {
@@ -85,6 +88,15 @@ function scoreboard_add(submitter_name, buses, miles) {
       scoreboard_update(scoreboard, data);
     });
   });
+}
+
+function prepareSubmitData(){
+  console.log("preparing data to submit");
+  var miles = $("#miles")[0].innerHTML;
+  var buses = $("#buses")[0].innerHTML;
+  var name = "Test";
+  scoreboard_add(name, buses, miles);
+
 }
 
 /* eof */
