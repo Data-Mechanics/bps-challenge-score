@@ -43,7 +43,7 @@ function scoreboard_update(scoreboard, data) {
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
     data[i].splice(1,1);
-    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
+//    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
   }
   scoreboard.clear();
   scoreboard.rows.add(data);
