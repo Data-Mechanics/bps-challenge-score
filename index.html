@@ -20,6 +20,7 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.js"></script>
@@ -150,22 +151,26 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <div class="row-fluid">
-              <table style="width:100%;">
-                <tr>
-                  <td width="60px;"><b>Name *:</b>&nbsp;</td><td><input type="text" style="width:100%;" id="submitter_name"></td>
-                  <td style="text-align:center; font-size:18px;"><div class="result"># buses</div></td>
-                  <td style="text-align:center; font-size:18px;"><div class="result"># miles</div></td>
-                </tr>
-                <tr>
-                  <td></td><td><small>* as it will appear in the scoreboard after approval</small></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </table>
-              <br/>
-            </div>
-            <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
+            <form>
+              <div class="row-fluid">
+                <table style="width:100%;">
+                  <tr>
+                    <td width="60px;"><b>Name* :</b>&nbsp;</td><td><input type="text" style="width:100%;" id="submitter_name"/></td>
+                    <td style="text-align:center; font-size:18px;"><div class="result"><span id="buses">#</span> buses</div></td>
+                    <td style="text-align:center; font-size:18px;"><div class="result"><span id="miles">#</span> miles</div></td>
+                  </tr>
+                  <tr>
+                    <td></td><td><small>* as it will appear in the scoreboard after approval</small></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </table>
+                <br/>
+              </div>
+              <input type="hidden" id="buses_submit" value=""/>
+              <input type="hidden" id="miles_submit" value=""/>
+              <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
+            </form>
           </div>
         </div>
       </section>
