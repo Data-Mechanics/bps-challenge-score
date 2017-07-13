@@ -178,9 +178,10 @@ function simulate_routes(workbook_js, buses, stops, students) {
 }
 
 function simulate_results(buses, stops, students) {
-  var distance_total = 0;
+  var distance_total = 0, buses_used = 0;
   for (var bus_id in buses) {
     distance_total += buses[bus_id].distance;
+    buses_used += (buses[bus_id].distance > 0) ? 1 : 0;
   }
   simulation_evaluation_success('Approximate total distance traveled by all buses: ' + (distance_total/1609.34).toFixed(2) + ' miles.');
 
@@ -193,6 +194,11 @@ function simulate_results(buses, stops, students) {
     simulation_validation_error('Did not pick up ' + students_not_boarded + ' students!');
   if (students_not_arrived > 0)
     simulation_validation_error('<b>Did not deliver a total of ' + students_not_arrived + ' students to their school(s)!</b>');
+
+  $("#buses").html(numeral(buses_used).format('0,0'));
+  $("#miles").html(numeral(distance_total.toFixed(3)).format('0,0.000'));
+  $("#buses_submit").val(buses_used);
+  $("#miles_submit").val(distance_total.toFixed(5));
 }
 
 /* eof */

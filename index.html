@@ -20,6 +20,7 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.31.2/handsontable.full.min.js"></script>
@@ -81,8 +82,23 @@
             </div>
             <input type="file" id="choose-file" accept=".xlsx,.xls,.XLSX,.XLS">
           </div>
-          <div class="col-md-8">
-            
+          <div id="criteria" class="col-md-8">
+            <span>Choose the criteria to use for evaluation:</span>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Student data matches challenge data.</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Student bus stop assignments adhere to constraints.</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Every student boards their assigned bus.</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Every student reaches their assigned school.</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Bus routes begin and end at bus yards.</label>
+            </div>
           </div>
           <div class="col-md-12">
             <div id="simulation_view" style="display:none;">
@@ -125,7 +141,7 @@
       </section>
       <section class="card">
         <h2 class="text-center">Submit and post your score</h2>
-        <p class="text-center">If you are satisfied with your evaluation, you may post your score for the record.</p>
+        <p class="text-center">If you are satisfied with your evaluation, you may post your score for the record. The name you specified will appear once it is approved by a moderator.</p>
         <hr/>
         <div class="row">
           <div class="col-md-6">
@@ -135,7 +151,26 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
+            <form>
+              <div class="row-fluid">
+                <table style="width:100%;">
+                  <tr>
+                    <td width="60px;"><b>Name* :</b>&nbsp;</td><td><input type="text" style="width:100%;" id="submitter_name"/></td>
+                    <td style="text-align:center; font-size:18px;"><div class="result"><span id="buses">#</span> buses</div></td>
+                    <td style="text-align:center; font-size:18px;"><div class="result"><span id="miles">#</span> miles</div></td>
+                  </tr>
+                  <tr>
+                    <td></td><td><small>* as it will appear in the scoreboard after approval</small></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </table>
+                <br/>
+              </div>
+              <input type="hidden" id="buses_submit" value=""/>
+              <input type="hidden" id="miles_submit" value=""/>
+              <button type="submit" id="submit" class="btn btn-primary ladda-button btn-lg btn-block" disabled>Submit</button>
+            </form>
           </div>
         </div>
       </section>
@@ -143,12 +178,8 @@
         <h2 class="text-center">Scoreboard</h2>
         <p class="text-center">The scores for past submissions can be viewed below.</p>
         <hr/>
-        <div class="row">
-          <!--div class="row-fluid">
-            Add Organization Name:
-            <input type="text" class="col-6" id="orgName"><br><br>
-          </div-->
-          <table id="scoreTable"></table>
+        <div id="scoreboard_container" class="row">
+          <table id="scoreboard"></table>
         </div>
       </section>
     </main>
@@ -162,6 +193,7 @@
     <script src="js/dropsheet.js"></script>
     <script>
 var sheets = {'Buses':true, 'Stop-Assignments':true, 'Routes':true};
+var scoreboard;
 var _target = document.getElementById('drop-area');
 var _choose = document.getElementById('choose-file-button');
 var spinner;
@@ -169,6 +201,7 @@ var _workstart = function() { spinner = new Spinner().spin(_target); }
 var _workend = function(clusterize) {
   return function() {
     spinner.stop();
+    $("#criteria").fadeTo(250, 1);
     $('#simulation_view').show();
     $('#spreadsheet_view').show();
     clusterize.clear();

@@ -2,6 +2,8 @@
  * Submission scoreboard functionalities.
  */
 
+var scoreboard_spinner; 
+
 $(document).ready(function() {
   // Initialize firebase.
   var config = {
@@ -13,45 +15,54 @@ $(document).ready(function() {
     messagingSenderId: "473750220771"
   };
   firebase.initializeApp(config);
+
   // Get a reference to the database service.
   database = firebase.database();
-  var dataList = [];
+  var data = [];
+
   // Retrieve current scores and attach listener.
-  // firebase.database().ref('/bps-scorer/').on('value', function(snapshot) {
   firebase.database().ref('/bps-scorer/').once('value').then(function(snapshot) {
-    snapshot.forEach(function(childSnapshot) { dataList.push(childSnapshot.val()); });
-    CreateTableFromJSON(dataList); // Construct and show datatable.
+    snapshot.forEach(function(childSnapshot) { data.push(childSnapshot.val()); });
+    scoreboard_update(scoreboard, data); // Construct and show datatable.
   });
+
+  scoreboard = scoreboard_create();
+  $('#scoreboard_container').fadeTo(100, 0.5);
+  scoreboard_spinner = new Spinner().spin(document.getElementById('scoreboard'));
 });
 
-function CreateTableFromJSON(dataList) {
-  //delete older table first
-
-  g_dataList = dataList;
-
-  for (var i = 0 ; i < dataList.length; i++) {
-    dataList[i] = $.map(g_dataList[i], function(el) { return el });
-    dataList[i].splice(1,1)
+function scoreboard_update(scoreboard, data) {
+  for (var i = 0 ; i < data.length; i++) {
+    data[i] = $.map(data[i], function(el) { return el });
+    data[i].splice(1,1);
   }
+  scoreboard.clear();
+  scoreboard.rows.add(data);
+  scoreboard.draw();
+  $('#scoreboard_container').fadeTo(100, 1);
+  scoreboard_spinner.stop();
+}
 
-  $('#scoreTable').DataTable({
-    data: dataList,
+function scoreboard_create() {
+  var scoreboard = $('#scoreboard').DataTable({
+    data: [],
     columns: [
-      {title: "Bus Id"},
-      {title: "Maximum Route Distance"},
-      {title: "Organization"},
-      {title: "Total Distance Travelled"}
+      {title: "Date"},
+      {title: "Submitter"},
+      {title: "Number of Buses"},
+      {title: "Total Distance Travelled by All Buses"}
     ],
     "order": [[3, "desc"]]
   });
+  return scoreboard;
 }
 
-function writeUserData(orgName, csvtext, bestRouteID, totalDistance, maxDistRoute) {
+function scoreboard_add(scoreboard, submitter_name, csvtext, bestRouteID, totalDistance, maxDistRoute) {
   // Change this: https://console.firebase.google.com/project/bps-scorer/database/rules if facing security issues.
   // { "rules": { ".read":true, ".write":true } }
   // Update table.
   firebase.database().ref().child('bps-scorer').push({
-    orgName: orgName,
+    orgName: submitter_name,
     csvtext: csvtext,
     bestRouteID: bestRouteID,
     totalDistance : totalDistance,
@@ -65,50 +76,9 @@ function writeUserData(orgName, csvtext, bestRouteID, totalDistance, maxDistRout
         var childData = childSnapshot.val();
         dataList.push(childData);
       });
-      //Construct and show datatable
-      // buildHtmlTable("#scoreTable", dataList);
-      $('#scoreTable').dataTable().fnDestroy();
-      CreateTableFromJSON(dataList);
+      scoreboard_update(scoreboard, dataList);
     });
   });
-}
-
-  //ref: https://mounirmesselmeni.github.io/2012/11/20/reading-csv-file-with-javascript-and-html5-file-api/
-
-function handleFiles(files) {
-  // Check for the various File API support.
-  if (window.FileReader) {
-    // FileReader are supported.
-    getAsText(files[0]);
-  } else {
-    alert('FileReader are not supported in this browser.');
-  }
-}
-
-function getAsText(fileToRead) {
-  var reader = new FileReader();
-  // Read file into memory as UTF-8      
-  reader.readAsText(fileToRead);
-  // Handle errors load.
-  reader.onload = loadHandler;
-}
-
-function loadHandler(event) {
-  var csv = event.target.result;
-  processData(csv);
-}
-
-function processData(csv) {
-  var allTextLines = csv.split(/\r\n|\n/);
-  var lines = [];
-  for (var i=0; i < allTextLines.length; i++) {
-    var data = allTextLines[i].split(';');
-    var tarr = [];
-    for (var j = 0; j < data.length; j++)
-      tarr.push(data[j]);
-    lines.push(tarr);
-  }
-  compute(lines, csv);
 }
 
 function compute(lines, csv) {
@@ -116,14 +86,8 @@ function compute(lines, csv) {
   var maxDistRoute=0;
   var routeDistance =0;
   var busTravellinMaxDist='';
-
-  document.getElementById("progress").innerHTML='<div class="progress"><div id="bar" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" width="1%"><span class="sr-only"></span></div></div>'
-
-  //Add to firebase here.
-  document.getElementById("result").innerHTML = "Total distance travelled by all buses is: <strong> " + totalDistance+" meters </strong><br>Maxiumum distance is travelled by <strong> bus route  " + busTravellinMaxDist + " </strong> which is " + maxDistRoute+ " meters";
-
-  var orgName = document.getElementById("orgName").value
-  writeUserData(orgName, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
+  var submitter_name = document.getElementById("submitter_name").value;
+  scoreboard_add(scoreboard, submitter_name, csv , busTravellinMaxDist, totalDistance, maxDistRoute);
 }
 
 /* eof */

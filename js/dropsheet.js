@@ -176,7 +176,6 @@ var DropSheet = function DropSheet(opts, sheets) {
 
   // For choosing a file using <input> (i.e., "Choose file" button).
   function handleFile(e) {
-    console.log("Here!");
     var files = e.target.files;
     if (window.FileReader) {
       // FileReader is supported.
