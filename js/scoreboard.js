@@ -44,14 +44,13 @@ function scoreboard_update(scoreboard, data) {
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
     scoreboard.rows.add({
-      "Date": data[i]["date"],
-      "Submitter": data[i]["submitter"],
-      "Number of Buses": data[i]["buses"],
-      "Total Distance Travelled by All Buses": data[i]["miles"]
+      "Date": data[i][3],
+      "Submitter": data[i][5],
+      "Number of Buses": data[i][1],
+      "Total Distance Travelled by All Buses": data[i][4]
     });
-//    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
   }
-// scoreboard.rows.add(data);
+  // scoreboard.rows.add(data);
 
   scoreboard.draw();
   $('#scoreboard_container').fadeTo(100, 1);
