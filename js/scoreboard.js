@@ -91,6 +91,9 @@ function scoreboard_add(submitter_name,buses, miles) {
 }
 
 function prepareSubmitData(){
+  if(($("#submit")[0]).classList.contains('disabled')){
+    return;
+  }
   console.log("preparing data to submit");
   var miles = $("#miles")[0].innerHTML;
   var buses = $("#buses")[0].innerHTML;

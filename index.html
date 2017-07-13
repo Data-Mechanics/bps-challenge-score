@@ -169,7 +169,7 @@
               </div>
               <input type="hidden" id="buses_submit" value=""/>
               <input type="hidden" id="miles_submit" value=""/>
-              <button type="submit" id="submit" class="disabled btn btn-primary ladda-button btn-lg btn-block"  onclick="prepareSubmitData()">Submit</button>
+              <button type="submit" id="submit" class="disabled non-active btn btn-primary ladda-button btn-lg btn-block"  onclick="prepareSubmitData()">Submit</button>
             </form>
           </div>
         </div>
@@ -257,6 +257,7 @@ $(document).ready(function() {
   $( document ).on( "submitReadyEvent", function( event, arg1, arg2 ) {
     console.log( "submission ready!" );
     $("#submit").removeClass('disabled');
+    $("#submit").removeClass('non-active');
     $("#submit").addClass('enabled');
 
   });
