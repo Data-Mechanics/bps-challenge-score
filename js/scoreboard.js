@@ -42,6 +42,7 @@ $(document).ready(function() {
 function scoreboard_update(scoreboard, data) {
   scoreboard.clear();
   for (var i = 0 ; i < data.length; i++) {
+    data[i]["name_team"] = data[i]["value_approved"] ? data[i]["name_team"]: "Pending Approval"
     data[i] = $.map(data[i], function(el) { return el });
   }
   scoreboard.rows.add(data);
