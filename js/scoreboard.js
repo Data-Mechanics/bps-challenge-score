@@ -1,4 +1,4 @@
-/**
+*
  * Submission scoreboard functionalities.
  */
 
@@ -40,13 +40,20 @@ $(document).ready(function() {
 });
 
 function scoreboard_update(scoreboard, data) {
+  scoreboard.clear();
   for (var i = 0 ; i < data.length; i++) {
     data[i] = $.map(data[i], function(el) { return el });
     data[i].splice(1,1);
+    scoreboard.rows.add({
+      "Date": data["date"],
+      "Submitter": data["submitter"],
+      "Number of Buses": data["buses"],
+      "Total Distance Travelled by All Buses": data[miles]
+    })
 //    console.log("Data at index " +i +" is "+ JSON.parse(data[i]))
   }
-  scoreboard.clear();
-  scoreboard.rows.add(data);
+// scoreboard.rows.add(data);
+
   scoreboard.draw();
   $('#scoreboard_container').fadeTo(100, 1);
   scoreboard_spinner.stop();
@@ -102,4 +109,4 @@ function prepareSubmitData(){
 
 }
 
-/* eof */
+/* eof 
