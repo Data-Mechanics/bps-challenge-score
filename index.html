@@ -143,12 +143,12 @@
         <h2 class="text-center">Scoreboard</h2>
         <p class="text-center">The scores for past submissions can be viewed below.</p>
         <hr/>
-        <div class="row">
+        <div id="scoreboard_container" class="row">
           <!--div class="row-fluid">
             Add Organization Name:
             <input type="text" class="col-6" id="orgName"><br><br>
           </div-->
-          <table id="scoreTable"></table>
+          <table id="scoreboard"></table>
         </div>
       </section>
     </main>
@@ -162,9 +162,10 @@
     <script src="js/dropsheet.js"></script>
     <script>
 var sheets = {'Buses':true, 'Stop-Assignments':true, 'Routes':true};
+var scoreboard;
 var _target = document.getElementById('drop-area');
 var _choose = document.getElementById('choose-file-button');
-var spinner;
+var spinner, loader;
 var _workstart = function() { spinner = new Spinner().spin(_target); }
 var _workend = function(clusterize) {
   return function() {
@@ -221,6 +222,8 @@ var _onsheet = function(json, cols, sheetnames, select_sheet_cb) {
 $(document).ready(function() {
   $window = $(window);
   $window.on('resize', calculateSize);
+  scoreboard = scoreboard_create();
+  //loader = new Spinner().spin(document.getElementById('scoreboard'));
 });
 var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
 var workbook_js = DropSheet({
@@ -233,6 +236,7 @@ $('#expand-table-button').click(function (e) {
   $('#tables-area').slideToggle();
   $(e.target).toggleClass('flip');
 });
+
     </script>
     <script src="js/simulation.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
