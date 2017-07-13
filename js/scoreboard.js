@@ -2,6 +2,8 @@
  * Submission scoreboard functionalities.
  */
 
+var scoreboard_spinner; 
+
 $(document).ready(function() {
   // Initialize firebase.
   var config = {
@@ -23,6 +25,10 @@ $(document).ready(function() {
     snapshot.forEach(function(childSnapshot) { dataList.push(childSnapshot.val()); });
     scoreboard_update(scoreboard, dataList); // Construct and show datatable.
   });
+
+  scoreboard = scoreboard_create();
+  $('#scoreboard_container').fadeTo(100, 0.5);
+  scoreboard_spinner = new Spinner().spin(document.getElementById('scoreboard'));
 });
 
 function scoreboard_update(scoreboard, data) {
@@ -33,6 +39,8 @@ function scoreboard_update(scoreboard, data) {
   scoreboard.clear();
   scoreboard.rows.add(data);
   scoreboard.draw();
+  $('#scoreboard_container').fadeTo(100, 1);
+  scoreboard_spinner.stop();
 }
 
 function scoreboard_create() {

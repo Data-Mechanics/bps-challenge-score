@@ -165,7 +165,7 @@ var sheets = {'Buses':true, 'Stop-Assignments':true, 'Routes':true};
 var scoreboard;
 var _target = document.getElementById('drop-area');
 var _choose = document.getElementById('choose-file-button');
-var spinner, loader;
+var spinner;
 var _workstart = function() { spinner = new Spinner().spin(_target); }
 var _workend = function(clusterize) {
   return function() {
@@ -222,8 +222,6 @@ var _onsheet = function(json, cols, sheetnames, select_sheet_cb) {
 $(document).ready(function() {
   $window = $(window);
   $window.on('resize', calculateSize);
-  scoreboard = scoreboard_create();
-  //loader = new Spinner().spin(document.getElementById('scoreboard'));
 });
 var clusterize = new Clusterize({scrollId:'scrollArea', contentId:'contentArea'});
 var workbook_js = DropSheet({
