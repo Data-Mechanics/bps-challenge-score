@@ -1,4 +1,4 @@
-*
+/*
  * Submission scoreboard functionalities.
  */
 
