@@ -18,12 +18,12 @@ $(document).ready(function() {
 
   // Get a reference to the database service.
   database = firebase.database();
-  var dataList = [];
+  var data = [];
 
   // Retrieve current scores and attach listener.
   firebase.database().ref('/bps-scorer/').once('value').then(function(snapshot) {
-    snapshot.forEach(function(childSnapshot) { dataList.push(childSnapshot.val()); });
-    scoreboard_update(scoreboard, dataList); // Construct and show datatable.
+    snapshot.forEach(function(childSnapshot) { data.push(childSnapshot.val()); });
+    scoreboard_update(scoreboard, data); // Construct and show datatable.
   });
 
   scoreboard = scoreboard_create();
@@ -47,10 +47,10 @@ function scoreboard_create() {
   var scoreboard = $('#scoreboard').DataTable({
     data: [],
     columns: [
-      {title: "Bus Id"},
-      {title: "Maximum Route Distance"},
+      {title: "Date"},
       {title: "Submitter"},
-      {title: "Total Distance Travelled"}
+      {title: "Number of Buses"},
+      {title: "Total Distance Travelled by All Buses"}
     ],
     "order": [[3, "desc"]]
   });
