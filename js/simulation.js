@@ -86,11 +86,15 @@ function simulate_prepare(workbook_js, buses, stops, students) {
         'boarded': false,
         'arrived': false,
         'bus_id': stop['Bus ID'],
-        'school': stop['School Longitude']+','+stop['School Latitude']
+        'school': stop['School Longitude']+','+stop['School Latitude'],
+        'hash': stop['Student Longitude'].toString().concat(stop['Student Latitude']  , stop['School Longitude'].toString().substring(0,9) , stop['School Latitude'].toString().substring(0,8))
       };
     students.push(student);
     stops[stop_id].students.push(student);
+
   }
+
+  //check here to match student ids and return if error
 
   simulate_routes(workbook_js, buses, stops, students);
 }
@@ -194,14 +198,29 @@ function simulate_results(buses, stops, students) {
     simulation_validation_error('Did not pick up ' + students_not_boarded + ' students!');
   if (students_not_arrived > 0)
     simulation_validation_error('<b>Did not deliver a total of ' + students_not_arrived + ' students to their school(s)!</b>');
+  
+  var canSubmit = 1
+  var jqxhr = $.getJSON( "student_hash.json", function(data) {
 
-  $("#buses").html(numeral(buses_used).format('0,0'));
-  $("#miles").html(numeral(distance_total.toFixed(3)).format('0,0.000'));
-  $("#buses_submit").val(buses_used);
-  $("#miles_submit").val(distance_total.toFixed(5));
+     $.each( students, function( key, val ) {
+          if(data.student_hash.indexOf(students[key]['hash']) == -1){
+            console.log(students[key]['hash'])
+            simulation_validation_error('<b>There is a mismatch with the original student data.</b>');
+            canSubmit = 0;
+            return false;
+          }
+       },function(){
+            $("#buses").html(numeral(buses_used).format('0,0'));
+            $("#miles").html(numeral(distance_total.toFixed(3)).format('0,0.000'));
+            $("#buses_submit").val(buses_used);
+            $("#miles_submit").val(distance_total.toFixed(5));
+          
+            //Send event for ready for submission
+            if(canSubmit){
+              $( document ).trigger("submitReadyEvent"); 
+            }
+          });
+  })
 
-  //Send event for ready for submission
-  $( document ).trigger("submitReadyEvent");
 }
 
-/* eof */
